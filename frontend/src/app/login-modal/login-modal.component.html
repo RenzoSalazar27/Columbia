@@ -1,0 +1,171 @@
+<!-- Modal de Login/Registro -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="onOverlayClick($event)">
+  <div class="modal-container">
+    <!-- Botón de cerrar -->
+    <button class="close-btn" (click)="hideModal()">
+      <span>&times;</span>
+    </button>
+
+    <!-- Contenido del modal -->
+    <div class="modal-content">
+      <!-- Logo y título -->
+      <div class="modal-header">
+        <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" class="modal-logo" />
+        <h2>{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</h2>
+        <p>{{ isLoginMode ? 'Accede a tu cuenta Columbia' : 'Únete a la familia Columbia' }}</p>
+      </div>
+
+      <!-- Formulario -->
+      <form class="login-form" (submit)="onSubmit($event)">
+        <!-- Campos adicionales solo para registro -->
+        <div class="form-row" *ngIf="!isLoginMode">
+          <div class="form-group">
+            <label for="firstName">Nombre</label>
+            <input 
+              type="text" 
+              id="firstName" 
+              name="firstName" 
+              placeholder="Tu nombre" 
+              required
+              autocomplete="given-name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Apellido</label>
+            <input 
+              type="text" 
+              id="lastName" 
+              name="lastName" 
+              placeholder="Tu apellido" 
+              required
+              autocomplete="family-name"
+            />
+          </div>
+        </div>
+
+        <!-- Campo de email -->
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="tu@email.com" 
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <!-- Campo de teléfono solo para registro -->
+        <div class="form-group" *ngIf="!isLoginMode">
+          <label for="phone">Teléfono</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            placeholder="+51 999 999 999" 
+            required
+            autocomplete="tel"
+          />
+        </div>
+
+        <!-- Campo de fecha de nacimiento solo para registro -->
+        <div class="form-group" *ngIf="!isLoginMode">
+          <label for="birthDate">Fecha de nacimiento</label>
+          <input 
+            type="date" 
+            id="birthDate" 
+            name="birthDate" 
+            required
+          />
+        </div>
+
+        <!-- Campo de contraseña -->
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <!-- Campo de confirmar contraseña (solo en registro) -->
+        <div class="form-group" *ngIf="!isLoginMode">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            placeholder="••••••••" 
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <!-- Términos y condiciones solo para registro -->
+        <div class="form-group" *ngIf="!isLoginMode">
+          <label class="checkbox-container">
+            <input type="checkbox" name="terms" required />
+            <span class="checkmark"></span>
+            Acepto los <a href="#" class="terms-link">Términos y Condiciones</a> y la <a href="#" class="terms-link">Política de Privacidad</a>
+          </label>
+        </div>
+
+        <!-- Newsletter solo para registro -->
+        <div class="form-group" *ngIf="!isLoginMode">
+          <label class="checkbox-container">
+            <input type="checkbox" name="newsletter" />
+            <span class="checkmark"></span>
+            Quiero recibir ofertas y novedades por email
+          </label>
+        </div>
+
+        <!-- Opciones adicionales (solo en login) -->
+        <div class="form-options" *ngIf="isLoginMode">
+          <label class="checkbox-container">
+            <input type="checkbox" name="remember" />
+            <span class="checkmark"></span>
+            Recordarme
+          </label>
+          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Botón de envío -->
+        <button type="submit" class="submit-btn">
+          {{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}
+        </button>
+      </form>
+
+      <!-- Separador -->
+      <div class="separator">
+        <span>o</span>
+      </div>
+
+      <!-- Botones de redes sociales -->
+      <div class="social-buttons">
+        <button class="social-btn google-btn">
+          <span>🔍</span>
+          Continuar con Google
+        </button>
+        <button class="social-btn facebook-btn">
+          <span>📘</span>
+          Continuar con Facebook
+        </button>
+      </div>
+
+      <!-- Cambiar modo -->
+      <div class="mode-toggle">
+        <p>
+          {{ isLoginMode ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?' }}
+          <button type="button" class="toggle-btn" (click)="toggleMode()">
+            {{ isLoginMode ? 'Crear cuenta' : 'Iniciar sesión' }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div> 

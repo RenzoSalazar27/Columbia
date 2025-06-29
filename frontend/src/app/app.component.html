@@ -1,0 +1,132 @@
+<!-- Header moderno con barra de búsqueda -->
+<header class="header-modern">
+  <div class="header-main">
+    <div class="container">
+      <div class="header-main-content">
+        <div class="header-left">
+          <div class="logo-modern" routerLink="/">
+            <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" />
+          </div>
+          
+          <div class="search-container">
+            <div class="search-box">
+              <input type="text" placeholder="Buscar productos, categorías..." class="search-input" />
+              <button class="search-btn">
+                <span class="search-icon">🔍</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <nav class="nav-modern">
+          <a routerLink="/productos/hombre" class="nav-link-modern">
+            <span class="nav-icon">👨</span>
+            <span class="nav-text">Hombre</span>
+          </a>
+          <a routerLink="/productos/mujer" class="nav-link-modern">
+            <span class="nav-icon">👩</span>
+            <span class="nav-text">Mujer</span>
+          </a>
+          <a routerLink="/productos/ninos" class="nav-link-modern">
+            <span class="nav-icon">👶</span>
+            <span class="nav-text">Niños</span>
+          </a>
+          <a routerLink="/productos/accesorios" class="nav-link-modern">
+            <span class="nav-icon">🎒</span>
+            <span class="nav-text">Accesorios</span>
+          </a>
+          <a routerLink="/productos/calzado" class="nav-link-modern">
+            <span class="nav-icon">👟</span>
+            <span class="nav-text">Calzado</span>
+          </a>
+          <div class="nav-promo">
+            <span class="promo-text">🔥 OFERTAS</span>
+          </div>
+        </nav>
+        
+        <div class="header-actions-modern">
+          <button class="action-btn" title="Favoritos">
+            <span class="action-icon">❤️</span>
+            <span class="action-label">Favoritos</span>
+          </button>
+          <button class="action-btn" title="Carrito">
+            <span class="action-icon">🛒</span>
+            <span class="action-label">Carrito</span>
+            <span class="cart-badge">3</span>
+          </button>
+          <button class="action-btn account-btn-modern" (click)="openLoginModal()" title="Mi cuenta">
+            <span class="action-icon">👤</span>
+            <span class="action-label">Mi cuenta</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Router outlet para mostrar el contenido de las rutas -->
+<router-outlet></router-outlet>
+
+<!-- Footer moderno -->
+<footer class="footer-modern">
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-content-modern">
+        <div class="footer-section">
+          <div class="footer-logo-modern">
+            <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" />
+            <h3>Columbia Sportswear</h3>
+          </div>
+          <p class="footer-description">
+            Líder mundial en ropa y equipamiento deportivo. Innovación, calidad y rendimiento para todas tus aventuras.
+          </p>
+          <div class="footer-social-modern">
+            <a href="#" class="social-link" title="Facebook">📘</a>
+            <a href="#" class="social-link" title="Instagram">📷</a>
+            <a href="#" class="social-link" title="Twitter">🐦</a>
+            <a href="#" class="social-link" title="YouTube">📺</a>
+            <a href="#" class="social-link" title="TikTok">🎵</a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-title">Productos</h4>
+          <ul class="footer-links-modern">
+            <li><a href="#">Ropa para Hombre</a></li>
+            <li><a href="#">Ropa para Mujer</a></li>
+            <li><a href="#">Ropa para Niños</a></li>
+            <li><a href="#">Calzado</a></li>
+            <li><a href="#">Accesorios</a></li>
+            <li><a href="#">Equipamiento</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-title">Newsletter</h4>
+          <p class="newsletter-desc">Suscríbete para recibir ofertas exclusivas y novedades</p>
+          <div class="newsletter-form-modern">
+            <input type="email" placeholder="Tu email" class="newsletter-input" />
+            <button class="newsletter-btn">Suscribirse</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-content">
+        <div class="footer-legal">
+          <a href="#" class="legal-link">Política de privacidad</a>
+          <a href="#" class="legal-link">Términos de servicio</a>
+        </div>
+        <div class="footer-copyright">
+          <p>&copy; 2024 Columbia Sportswear. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal de Login -->
+<app-login-modal #loginModal></app-login-modal>

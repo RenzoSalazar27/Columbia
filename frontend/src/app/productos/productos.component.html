@@ -1,0 +1,351 @@
+<!-- Contenido del HOME -->
+<div *ngIf="esHome" class="home-content">
+  <!-- Hero Section Moderno -->
+  <section class="hero-modern">
+    <div class="hero-background">
+      <div class="hero-overlay-gradient"></div>
+      <div class="hero-carousel">
+        <div class="carousel-slide active">
+          <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=1920&q=80" alt="Deportes" />
+        </div>
+        <div class="carousel-slide">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1920&q=80" alt="Baloncesto" />
+        </div>
+        <div class="carousel-slide">
+          <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=1920&q=80" alt="Tenis" />
+        </div>
+      </div>
+      <div class="carousel-indicators">
+        <span class="indicator active" data-slide="0"></span>
+        <span class="indicator" data-slide="1"></span>
+        <span class="indicator" data-slide="2"></span>
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="title-line">Rendimiento</span>
+          <span class="title-highlight">Deportivo</span>
+        </h1>
+        <p class="hero-subtitle">Equipamiento premium para alcanzar tu máximo potencial</p>
+        <div class="hero-cta">
+          <button class="btn-hero-primary">Explorar Colección</button>
+          <button class="btn-hero-secondary">Ver Catálogo</button>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">50K+</span>
+          <span class="stat-label">Deportistas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">100+</span>
+          <span class="stat-label">Deportes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">25</span>
+          <span class="stat-label">Años de Experiencia</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Categorías Moderna -->
+  <section class="categories-modern">
+    <div class="container">
+      <div class="section-header-modern">
+        <h2 class="section-title">Explora por Categoría</h2>
+        <p class="section-description">Encuentra el equipo perfecto para tu próxima aventura</p>
+      </div>
+      <div class="categories-grid-modern">
+        <div class="category-card-modern" routerLink="/productos/hombre">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80" alt="Hombre" />
+            <div class="category-overlay">
+              <div class="category-icon">🧥</div>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>Hombre</h3>
+            <p>Ropa y equipamiento para aventureros</p>
+            <span class="category-arrow">→</span>
+          </div>
+        </div>
+        
+        <div class="category-card-modern" routerLink="/productos/mujer">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80" alt="Mujer" />
+            <div class="category-overlay">
+              <div class="category-icon">👩‍🦰</div>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>Mujer</h3>
+            <p>Estilo y funcionalidad para exploradoras</p>
+            <span class="category-arrow">→</span>
+          </div>
+        </div>
+        
+        <div class="category-card-modern" routerLink="/productos/ninos">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80" alt="Niños" />
+            <div class="category-overlay">
+              <div class="category-icon">🧒</div>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>Niños</h3>
+            <p>Equipamiento seguro para pequeños aventureros</p>
+            <span class="category-arrow">→</span>
+          </div>
+        </div>
+        
+        <div class="category-card-modern" routerLink="/productos/accesorios">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" alt="Accesorios" />
+            <div class="category-overlay">
+              <div class="category-icon">🎒</div>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>Accesorios</h3>
+            <p>Complementos esenciales para tu aventura</p>
+            <span class="category-arrow">→</span>
+          </div>
+        </div>
+        
+        <div class="category-card-modern" routerLink="/productos/calzado">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80" alt="Calzado" />
+            <div class="category-overlay">
+              <div class="category-icon">🥾</div>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>Calzado</h3>
+            <p>Zapatillas y botas para cualquier terreno</p>
+            <span class="category-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Productos Destacados -->
+  <section class="featured-products">
+    <div class="container">
+      <div class="section-header-modern">
+        <h2 class="section-title">Productos Destacados</h2>
+        <p class="section-description">Los favoritos de nuestros aventureros</p>
+      </div>
+      <div class="products-showcase">
+        <div class="product-showcase-card">
+          <div class="product-image">
+            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80" alt="Chaqueta Premium" />
+            <div class="product-badge">Más Vendido</div>
+          </div>
+          <div class="product-info">
+            <h3>Chaqueta Impermeable Premium</h3>
+            <p>Tecnología avanzada para condiciones extremas</p>
+            <div class="product-price">S/ 899.00</div>
+            <button class="btn-product">Ver Producto</button>
+          </div>
+        </div>
+        
+        <div class="product-showcase-card">
+          <div class="product-image">
+            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=500&q=80" alt="Zapatillas Trekking" />
+            <div class="product-badge">Nuevo</div>
+          </div>
+          <div class="product-info">
+            <h3>Zapatillas Trekking Pro</h3>
+            <p>Máximo confort para largas caminatas</p>
+            <div class="product-price">S/ 419.00</div>
+            <button class="btn-product">Ver Producto</button>
+          </div>
+        </div>
+        
+        <div class="product-showcase-card">
+          <div class="product-image">
+            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80" alt="Mochila Outdoor" />
+            <div class="product-badge">Popular</div>
+          </div>
+          <div class="product-info">
+            <h3>Mochila Outdoor Elite</h3>
+            <p>Capacidad y durabilidad excepcionales</p>
+            <div class="product-price">S/ 299.00</div>
+            <button class="btn-product">Ver Producto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Actividades -->
+  <section class="activities-section">
+    <div class="container">
+      <div class="section-header-modern">
+        <h2 class="section-title">Explora por Actividad</h2>
+        <p class="section-description">Equipamiento especializado para cada aventura</p>
+      </div>
+      <div class="activities-grid">
+        <div class="activity-card">
+          <div class="activity-image">
+            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Trekking" />
+          </div>
+          <div class="activity-content">
+            <h3>Trekking</h3>
+            <p>Explora senderos y montañas</p>
+            <span class="activity-count">150+ productos</span>
+          </div>
+        </div>
+        
+        <div class="activity-card">
+          <div class="activity-image">
+            <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" alt="Camping" />
+          </div>
+          <div class="activity-content">
+            <h3>Camping</h3>
+            <p>Vive la naturaleza de cerca</p>
+            <span class="activity-count">200+ productos</span>
+          </div>
+        </div>
+        
+        <div class="activity-card">
+          <div class="activity-image">
+            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80" alt="Running" />
+          </div>
+          <div class="activity-content">
+            <h3>Running</h3>
+            <p>Libera tu energía al máximo</p>
+            <span class="activity-count">120+ productos</span>
+          </div>
+        </div>
+        
+        <div class="activity-card">
+          <div class="activity-image">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Montañismo" />
+          </div>
+          <div class="activity-content">
+            <h3>Montañismo</h3>
+            <p>Alcanza nuevas alturas</p>
+            <span class="activity-count">180+ productos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Contenido de PRODUCTOS -->
+<div *ngIf="!esHome">
+  <!-- Banner de categoría moderno -->
+  <section class="category-banner-modern">
+    <div class="banner-background">
+      <div class="banner-overlay"></div>
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Banner" />
+    </div>
+    <div class="banner-content">
+      <h1 class="banner-title">{{ tituloCategoria }}</h1>
+      <p class="banner-description">{{ descripcionCategoria }}</p>
+      <div class="banner-stats">
+        <div class="banner-stat">
+          <span class="stat-number">{{ productos.length }}+</span>
+          <span class="stat-label">Productos</span>
+        </div>
+        <div class="banner-stat">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">Calidad</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros modernos -->
+  <section class="filters-modern">
+    <div class="container">
+      <div class="filters-content">
+        <div class="filter-group">
+          <label for="ordenar">Ordenar por</label>
+          <select id="ordenar" class="filter-select">
+            <option value="popular">Más populares</option>
+            <option value="precio-bajo">Precio: Menor a Mayor</option>
+            <option value="precio-alto">Precio: Mayor a Menor</option>
+            <option value="nombre">Nombre A-Z</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="rango-precio">Rango de precio</label>
+          <select id="rango-precio" class="filter-select">
+            <option value="todos">Todos los precios</option>
+            <option value="0-100">Hasta S/ 100</option>
+            <option value="100-300">S/ 100 - S/ 300</option>
+            <option value="300-500">S/ 300 - S/ 500</option>
+            <option value="500+">Más de S/ 500</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="talla">Talla</label>
+          <select id="talla" class="filter-select">
+            <option value="todas">Todas las tallas</option>
+            <option value="s">S</option>
+            <option value="m">M</option>
+            <option value="l">L</option>
+            <option value="xl">XL</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de productos moderno -->
+  <section class="products-modern">
+    <div class="container">
+      <div class="products-grid-modern">
+        <div class="product-card-modern" *ngFor="let producto of productos">
+          <div class="product-image-modern">
+            <img [src]="producto.imagen" [alt]="producto.nombre" />
+            <div class="product-overlay">
+              <button class="btn-quick-view">Vista rápida</button>
+              <button class="btn-add-wishlist">❤</button>
+            </div>
+            <div class="product-badge-modern">Nuevo</div>
+          </div>
+          <div class="product-info-modern">
+            <h3 class="product-name">{{ producto.nombre }}</h3>
+            <p class="product-description">{{ producto.descripcion }}</p>
+            <div class="product-price-modern">{{ producto.precio }}</div>
+            <div class="product-actions">
+              <button class="btn-details">Ver detalles</button>
+              <button class="btn-add-cart">Agregar al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Paginación moderna -->
+  <section class="pagination-modern">
+    <div class="container">
+      <div class="pagination-content">
+        <button class="btn-pagination" disabled>
+          <span>←</span> Anterior
+        </button>
+        <div class="page-numbers">
+          <button class="page-number active">1</button>
+          <button class="page-number">2</button>
+          <button class="page-number">3</button>
+          <span class="page-dots">...</span>
+          <button class="page-number">8</button>
+        </div>
+        <button class="btn-pagination">
+          Siguiente <span>→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal de Login -->
+<app-login-modal #modalLogin></app-login-modal>
