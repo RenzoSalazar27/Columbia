@@ -1,0 +1,192 @@
+<!-- Panel de Administrador -->
+<div class="admin-container">
+  <!-- Header del Panel -->
+  <header class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-left">
+        <h1 class="admin-title">
+          <span class="admin-icon">⚙️</span>
+          Panel de Administración
+        </h1>
+        <p class="admin-subtitle">Gestiona tu tienda Columbia desde un solo lugar</p>
+      </div>
+      <div class="admin-header-right">
+        <div class="admin-user-info">
+          <span class="admin-user-avatar">👤</span>
+          <div class="admin-user-details">
+            <span class="admin-user-name">Administrador</span>
+            <span class="admin-user-role">Super Admin</span>
+          </div>
+        </div>
+        <button class="admin-logout-btn" routerLink="/">
+          <span class="logout-icon">🚪</span>
+          Salir
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navegación del Panel -->
+  <nav class="admin-nav">
+    <div class="admin-nav-content">
+      <a (click)="seleccionarSeccion('dashboard'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'dashboard'" class="admin-nav-item">
+        <span class="nav-icon">📊</span>
+        Dashboard
+      </a>
+      <a (click)="seleccionarSeccion('productos'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'productos'" class="admin-nav-item">
+        <span class="nav-icon">👕</span>
+        Productos
+      </a>
+      <a (click)="seleccionarSeccion('pedidos'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'pedidos'" class="admin-nav-item">
+        <span class="nav-icon">📦</span>
+        Pedidos
+      </a>
+      <a (click)="seleccionarSeccion('clientes'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'clientes'" class="admin-nav-item">
+        <span class="nav-icon">👥</span>
+        Clientes
+      </a>
+      <a (click)="seleccionarSeccion('categorias'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'categorias'" class="admin-nav-item">
+        <span class="nav-icon">🏷️</span>
+        Categorías
+      </a>
+      <a (click)="seleccionarSeccion('reportes'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'reportes'" class="admin-nav-item">
+        <span class="nav-icon">📈</span>
+        Reportes
+      </a>
+      <a (click)="seleccionarSeccion('configuracion'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'configuracion'" class="admin-nav-item">
+        <span class="nav-icon">⚙️</span>
+        Configuración
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido Principal -->
+  <main class="admin-main">
+    <!-- Dashboard -->
+    <section *ngIf="seccionSeleccionada === 'dashboard'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">📊 Dashboard</h2>
+        <p class="section-subtitle">Resumen general de tu tienda</p>
+      </div>
+      <!-- Aquí va el contenido estático del dashboard -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <h3 class="stat-value">S/ 15,420.00</h3>
+            <p class="stat-label">Ventas Hoy</p>
+            <span class="stat-change positive">+12.5%</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-content">
+            <h3 class="stat-value">S/ 458,750.00</h3>
+            <p class="stat-label">Ventas del Mes</p>
+            <span class="stat-change positive">+8.3%</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-content">
+            <h3 class="stat-value">23</h3>
+            <p class="stat-label">Pedidos Pendientes</p>
+            <span class="stat-change negative">+5</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <h3 class="stat-value">45</h3>
+            <p class="stat-label">Clientes Nuevos</p>
+            <span class="stat-change positive">+15.2%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Productos -->
+    <section *ngIf="seccionSeleccionada === 'productos'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">👕 Productos</h2>
+        <p class="section-subtitle">Gestión de productos (contenido estático de ejemplo)</p>
+      </div>
+      <p>Listado de productos, acciones de ejemplo, etc.</p>
+    </section>
+
+    <!-- Pedidos -->
+    <section *ngIf="seccionSeleccionada === 'pedidos'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">📦 Pedidos</h2>
+        <p class="section-subtitle">Gestión de pedidos (contenido estático de ejemplo)</p>
+      </div>
+      <p>Listado de pedidos, acciones de ejemplo, etc.</p>
+    </section>
+
+    <!-- Clientes -->
+    <section *ngIf="seccionSeleccionada === 'clientes'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">👥 Clientes</h2>
+        <p class="section-subtitle">Gestión de clientes (contenido estático de ejemplo)</p>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Juan Pérez</td>
+            <td>juanperez&#64;email.com</td>
+            <td>Cliente</td>
+            <td>
+              <button class="action-btn delete-btn" title="Eliminar">🗑️</button>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>María García</td>
+            <td>maria&#64;email.com</td>
+            <td>Cliente</td>
+            <td>
+              <button class="action-btn delete-btn" title="Eliminar">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Categorías -->
+    <section *ngIf="seccionSeleccionada === 'categorias'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">🏷️ Categorías</h2>
+        <p class="section-subtitle">Gestión de categorías (contenido estático de ejemplo)</p>
+      </div>
+      <p>Listado de categorías, acciones de ejemplo, etc.</p>
+    </section>
+
+    <!-- Reportes -->
+    <section *ngIf="seccionSeleccionada === 'reportes'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">📈 Reportes</h2>
+        <p class="section-subtitle">Reportes y estadísticas (contenido estático de ejemplo)</p>
+      </div>
+      <p>Gráficas y reportes de ejemplo.</p>
+    </section>
+
+    <!-- Configuración -->
+    <section *ngIf="seccionSeleccionada === 'configuracion'" class="admin-section">
+      <div class="section-header">
+        <h2 class="section-title">⚙️ Configuración</h2>
+        <p class="section-subtitle">Configuración del sistema (contenido estático de ejemplo)</p>
+      </div>
+      <p>Opciones de configuración de ejemplo.</p>
+    </section>
+  </main>
+</div> 

@@ -12,6 +12,8 @@ import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UsuarioService {
@@ -34,6 +36,80 @@ public class UsuarioService {
             throw new RuntimeException("Usuario con ID " + idUsuario + " no encontrado");
         }
         return convertirADTO(usuario.get());
+    }
+
+    // Login de usuario
+    public Map<String, Object> login(String emailUsuario, String contrasenaUsuario) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmailUsuario(emailUsuario);
+        
+        if (usuario.isEmpty()) {
+            throw new RuntimeException("Email o contraseña incorrectos");
+        }
+        
+        Usuario usuarioEncontrado = usuario.get();
+        
+        if (!usuarioEncontrado.getContrasenaUsuario().equals(contrasenaUsuario)) {
+            throw new RuntimeException("Email o contraseña incorrectos");
+        }
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("usuario", convertirADTO(usuarioEncontrado));
+        response.put("mensaje", "Login exitoso");
+        
+        return response;
+    }
+
+    // Registro de usuario
+    public Map<String, Object> registro(String nombreUsuario, String apellidoUsuario, 
+                                       String emailUsuario, String telefonoUsuario, 
+                                       LocalDate fechaNacimientoUsuario, String contrasenaUsuario) {
+        
+        // Validar que el email no exista
+        if (usuarioRepository.existsByEmailUsuario(emailUsuario)) {
+            throw new RuntimeException("El email " + emailUsuario + " ya está registrado");
+        }
+
+        // Generar ID único
+        String idUsuario = generarIdUsuario();
+
+        // Crear entidad Usuario
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(idUsuario);
+        usuario.setNombreUsuario(nombreUsuario);
+        usuario.setApellidoUsuario(apellidoUsuario);
+        usuario.setEmailUsuario(emailUsuario);
+        usuario.setTelefonoUsuario(telefonoUsuario);
+        usuario.setFechaNacimientoUsuario(fechaNacimientoUsuario);
+        usuario.setContrasenaUsuario(contrasenaUsuario);
+        usuario.setFechaRegistroUsuario(LocalDate.now());
+        usuario.setEsAdminUsuario(false);
+
+        // Guardar en base de datos
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        // Retornar respuesta
+        Map<String, Object> response = new HashMap<>();
+        response.put("usuario", convertirADTO(usuarioGuardado));
+        response.put("mensaje", "Usuario registrado exitosamente");
+        
+        return response;
+    }
+
+    // Validar contraseña actual
+    public Map<String, Object> validarContrasena(String idUsuario, String contrasenaActual) {
+        Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
+        
+        if (usuario.isEmpty()) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        
+        Usuario usuarioEncontrado = usuario.get();
+        boolean esValida = usuarioEncontrado.getContrasenaUsuario().equals(contrasenaActual);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("esValida", esValida);
+        
+        return response;
     }
 
     public Usuario guardar(Usuario usuario) {
@@ -65,6 +141,7 @@ public class UsuarioService {
         usuario.setContrasenaUsuario(usuarioDTO.getContrasenaUsuario());
         usuario.setDireccionUsuario(usuarioDTO.getDireccionUsuario());
         usuario.setTelefonoUsuario(usuarioDTO.getTelefonoUsuario());
+        usuario.setFechaNacimientoUsuario(usuarioDTO.getFechaNacimientoUsuario());
         usuario.setFechaRegistroUsuario(usuarioDTO.getFechaRegistroUsuario() != null ? 
             usuarioDTO.getFechaRegistroUsuario() : LocalDate.now());
         usuario.setEsAdminUsuario(usuarioDTO.getEsAdminUsuario() != null ? 
@@ -111,6 +188,9 @@ public class UsuarioService {
         if (usuarioDTO.getTelefonoUsuario() != null) {
             usuario.setTelefonoUsuario(usuarioDTO.getTelefonoUsuario());
         }
+        if (usuarioDTO.getFechaNacimientoUsuario() != null) {
+            usuario.setFechaNacimientoUsuario(usuarioDTO.getFechaNacimientoUsuario());
+        }
         if (usuarioDTO.getEsAdminUsuario() != null) {
             usuario.setEsAdminUsuario(usuarioDTO.getEsAdminUsuario());
         }
@@ -129,6 +209,24 @@ public class UsuarioService {
         usuarioRepository.deleteById(idUsuario);
     }
 
+    // Método auxiliar para generar ID único
+    private String generarIdUsuario() {
+        // Generar un ID de 8 caracteres alfanuméricos
+        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder id = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int index = (int) (Math.random() * caracteres.length());
+            id.append(caracteres.charAt(index));
+        }
+        
+        // Verificar que el ID no exista
+        if (usuarioRepository.existsById(id.toString())) {
+            return generarIdUsuario(); // Recursión si el ID ya existe
+        }
+        
+        return id.toString();
+    }
+
     // Método auxiliar para convertir entidad a DTO
     private UsuarioDTO convertirADTO(Usuario usuario) {
         return new UsuarioDTO(
@@ -139,6 +237,7 @@ public class UsuarioService {
             usuario.getContrasenaUsuario(),
             usuario.getDireccionUsuario(),
             usuario.getTelefonoUsuario(),
+            usuario.getFechaNacimientoUsuario(),
             usuario.getFechaRegistroUsuario(),
             usuario.getEsAdminUsuario()
         );

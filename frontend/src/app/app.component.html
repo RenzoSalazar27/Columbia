@@ -1,5 +1,5 @@
 <!-- Header moderno con barra de búsqueda -->
-<header class="header-modern">
+<header class="header-modern" *ngIf="!isAdminRoute()">
   <div class="header-main">
     <div class="container">
       <div class="header-main-content">
@@ -61,10 +61,16 @@
             <span class="action-label">Mi cuenta</span>
           </button>
           
-          <!-- Botón de perfil cuando está logueado -->
-          <button class="action-btn account-btn-modern" (click)="openPerfilModal()" title="Perfil" *ngIf="isLoggedIn">
+          <!-- Botón de perfil cuando está logueado como usuario normal -->
+          <button class="action-btn account-btn-modern" (click)="openPerfilModal()" title="Perfil" *ngIf="isLoggedIn && !currentUser?.esAdminUsuario">
             <span class="action-icon">👤</span>
             <span class="action-label">Perfil</span>
+          </button>
+          
+          <!-- Botón de admin cuando está logueado como administrador -->
+          <button class="action-btn account-btn-modern" routerLink="/admin" title="Panel de Administración" *ngIf="isLoggedIn && currentUser?.esAdminUsuario">
+            <span class="action-icon">⚙️</span>
+            <span class="action-label">Admin</span>
           </button>
           
           <!-- Botón de cerrar sesión -->
@@ -82,7 +88,7 @@
 <router-outlet></router-outlet>
 
 <!-- Footer moderno -->
-<footer class="footer-modern">
+<footer class="footer-modern" *ngIf="!isAdminRoute()">
   <div class="footer-main">
     <div class="container">
       <div class="footer-content-modern">

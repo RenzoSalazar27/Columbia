@@ -24,11 +24,14 @@ public class Usuario {
     @Column(name = "contraseña_usuario", length = 255, nullable = false)
     private String contrasenaUsuario;
 
-    @Column(name = "direccion_usuario", length = 255, nullable = false)
+    @Column(name = "direccion_usuario", length = 255)
     private String direccionUsuario;
 
     @Column(name = "telefono_usuario", length = 20, nullable = false)
     private String telefonoUsuario;
+
+    @Column(name = "fecha_nacimiento_usuario")
+    private LocalDate fechaNacimientoUsuario;
 
     @Column(name = "fecha_registro_usuario", nullable = false)
     private LocalDate fechaRegistroUsuario;
@@ -103,6 +106,14 @@ public class Usuario {
 
     public void setTelefonoUsuario(String telefonoUsuario) {
         this.telefonoUsuario = telefonoUsuario;
+    }
+
+    public LocalDate getFechaNacimientoUsuario() {
+        return fechaNacimientoUsuario;
+    }
+
+    public void setFechaNacimientoUsuario(LocalDate fechaNacimientoUsuario) {
+        this.fechaNacimientoUsuario = fechaNacimientoUsuario;
     }
 
     public LocalDate getFechaRegistroUsuario() {

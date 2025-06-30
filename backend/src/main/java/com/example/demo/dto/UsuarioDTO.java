@@ -10,6 +10,7 @@ public class UsuarioDTO {
     private String contrasenaUsuario;
     private String direccionUsuario;
     private String telefonoUsuario;
+    private LocalDate fechaNacimientoUsuario;
     private LocalDate fechaRegistroUsuario;
     private Boolean esAdminUsuario;
 
@@ -18,7 +19,7 @@ public class UsuarioDTO {
 
     public UsuarioDTO(String idUsuario, String nombreUsuario, String apellidoUsuario, 
                      String emailUsuario, String contrasenaUsuario, String direccionUsuario, 
-                     String telefonoUsuario, LocalDate fechaRegistroUsuario, Boolean esAdminUsuario) {
+                     String telefonoUsuario, LocalDate fechaNacimientoUsuario, LocalDate fechaRegistroUsuario, Boolean esAdminUsuario) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.apellidoUsuario = apellidoUsuario;
@@ -26,6 +27,7 @@ public class UsuarioDTO {
         this.contrasenaUsuario = contrasenaUsuario;
         this.direccionUsuario = direccionUsuario;
         this.telefonoUsuario = telefonoUsuario;
+        this.fechaNacimientoUsuario = fechaNacimientoUsuario;
         this.fechaRegistroUsuario = fechaRegistroUsuario;
         this.esAdminUsuario = esAdminUsuario;
     }
@@ -85,6 +87,14 @@ public class UsuarioDTO {
 
     public void setTelefonoUsuario(String telefonoUsuario) {
         this.telefonoUsuario = telefonoUsuario;
+    }
+
+    public LocalDate getFechaNacimientoUsuario() {
+        return fechaNacimientoUsuario;
+    }
+
+    public void setFechaNacimientoUsuario(LocalDate fechaNacimientoUsuario) {
+        this.fechaNacimientoUsuario = fechaNacimientoUsuario;
     }
 
     public LocalDate getFechaRegistroUsuario() {
