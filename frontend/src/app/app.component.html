@@ -5,7 +5,7 @@
       <div class="header-main-content">
         <div class="header-left">
           <div class="logo-modern" routerLink="/">
-            <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" />
+            <img src="/logoColumbia.png" alt="Columbia Logo" />
           </div>
           
           <div class="search-container">
@@ -54,9 +54,23 @@
             <span class="action-label">Carrito</span>
             <span class="cart-badge">3</span>
           </button>
-          <button class="action-btn account-btn-modern" (click)="openLoginModal()" title="Mi cuenta">
+          
+          <!-- Botón de cuenta/perfil -->
+          <button class="action-btn account-btn-modern" (click)="openLoginModal()" title="Mi cuenta" *ngIf="!isLoggedIn">
             <span class="action-icon">👤</span>
             <span class="action-label">Mi cuenta</span>
+          </button>
+          
+          <!-- Botón de perfil cuando está logueado -->
+          <button class="action-btn account-btn-modern" title="Perfil" *ngIf="isLoggedIn">
+            <span class="action-icon">👤</span>
+            <span class="action-label">Perfil</span>
+          </button>
+          
+          <!-- Botón de cerrar sesión -->
+          <button class="action-btn" (click)="logout()" title="Cerrar sesión" *ngIf="isLoggedIn">
+            <span class="action-icon">❌</span>
+            <span class="action-label">Cerrar sesión</span>
           </button>
         </div>
       </div>
@@ -74,7 +88,7 @@
       <div class="footer-content-modern">
         <div class="footer-section">
           <div class="footer-logo-modern">
-            <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" />
+            <img src="/logoColumbia.png" alt="Columbia Logo" />
             <h3>Columbia Sportswear</h3>
           </div>
           <p class="footer-description">

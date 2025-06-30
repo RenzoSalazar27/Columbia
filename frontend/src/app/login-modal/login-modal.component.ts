@@ -1,42 +1,241 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.css']
 })
 export class LoginModalComponent {
+  @Output() authStatusChanged = new EventEmitter<any>();
+
   isVisible = false;
   isLoginMode = true; // true para login, false para registro
 
+  // Datos del formulario
+  formData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    password: '',
+    confirmPassword: ''
+  };
+
+  // Estado de carga y mensajes
+  isLoading = false;
+  message = '';
+  isError = false;
+
+  constructor(private http: HttpClient) {}
+
   showModal() {
     this.isVisible = true;
+    this.resetForm();
   }
 
   hideModal() {
     this.isVisible = false;
+    this.resetForm();
   }
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.formData = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      birthDate: '',
+      password: '',
+      confirmPassword: ''
+    };
+    this.message = '';
+    this.isError = false;
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
-    // Aquí iría la lógica de autenticación en una implementación real
-    console.log('Formulario enviado:', this.isLoginMode ? 'Login' : 'Registro');
-    // Simular éxito y cerrar modal
-    setTimeout(() => {
-      this.hideModal();
-    }, 1000);
+    this.isLoading = true;
+    this.message = '';
+    this.isError = false;
+
+    if (this.isLoginMode) {
+      this.login();
+    } else {
+      this.registro();
+    }
+  }
+
+  login() {
+    // Validaciones del frontend
+    const validationError = this.validarLogin();
+    if (validationError) {
+      this.isLoading = false;
+      this.message = validationError;
+      this.isError = true;
+      return;
+    }
+
+    const loginData = {
+      email: this.formData.email,
+      password: this.formData.password
+    };
+
+    this.http.post('http://localhost:8082/api/usuarios/login', loginData)
+      .subscribe({
+        next: (response: any) => {
+          // Guardar datos del usuario en localStorage
+          localStorage.setItem('usuario', JSON.stringify(response));
+          
+          // Emitir evento de cambio de estado
+          this.authStatusChanged.emit(response);
+          
+          // Cerrar modal inmediatamente
+          this.hideModal();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.message = error.error?.error || 'Error en el inicio de sesión';
+          this.isError = true;
+        }
+      });
+  }
+
+  registro() {
+    // Validaciones del frontend
+    const validationError = this.validarRegistro();
+    if (validationError) {
+      this.isLoading = false;
+      this.message = validationError;
+      this.isError = true;
+      return;
+    }
+
+    // Validar que las contraseñas coincidan
+    if (this.formData.password !== this.formData.confirmPassword) {
+      this.isLoading = false;
+      this.message = 'Las contraseñas no coinciden';
+      this.isError = true;
+      return;
+    }
+
+    const registroData = {
+      nombreUsuario: this.formData.firstName,
+      apellidoUsuario: this.formData.lastName,
+      emailUsuario: this.formData.email,
+      telefonoUsuario: this.formData.phone,
+      fechaNacimientoUsuario: this.formData.birthDate,
+      contrasenaUsuario: this.formData.password
+    };
+
+    this.http.post('http://localhost:8082/api/usuarios/registro', registroData)
+      .subscribe({
+        next: (response: any) => {
+          // Guardar datos del usuario en localStorage
+          localStorage.setItem('usuario', JSON.stringify(response));
+          
+          // Emitir evento de cambio de estado
+          this.authStatusChanged.emit(response);
+          
+          // Cerrar modal inmediatamente
+          this.hideModal();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.message = error.error?.error || 'Error en el registro';
+          this.isError = true;
+        }
+      });
   }
 
   onOverlayClick(event: Event) {
     if (event.target === event.currentTarget) {
       this.hideModal();
     }
+  }
+
+  // Validaciones para registro
+  validarRegistro(): string | null {
+    // Validar nombre
+    if (!this.formData.firstName || this.formData.firstName.trim().length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
+    }
+
+    // Validar apellido
+    if (!this.formData.lastName || this.formData.lastName.trim().length < 2) {
+      return 'El apellido debe tener al menos 2 caracteres';
+    }
+
+    // Validar email
+    if (!this.formData.email || !this.validarEmail(this.formData.email)) {
+      return 'Ingrese un email válido';
+    }
+
+    // Validar teléfono
+    if (!this.formData.phone || this.formData.phone.trim().length < 8) {
+      return 'El teléfono debe tener al menos 8 dígitos';
+    }
+
+    // Validar fecha de nacimiento
+    if (!this.formData.birthDate) {
+      return 'Seleccione su fecha de nacimiento';
+    }
+
+    // Validar que la fecha no sea futura
+    const fechaNacimiento = new Date(this.formData.birthDate);
+    const hoy = new Date();
+    if (fechaNacimiento > hoy) {
+      return 'La fecha de nacimiento no puede ser futura';
+    }
+
+    // Validar edad mínima (13 años)
+    const edadMinima = new Date();
+    edadMinima.setFullYear(edadMinima.getFullYear() - 13);
+    if (fechaNacimiento > edadMinima) {
+      return 'Debe tener al menos 13 años para registrarse';
+    }
+
+    // Validar contraseña
+    if (!this.formData.password || this.formData.password.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+
+    // Validar confirmación de contraseña
+    if (!this.formData.confirmPassword) {
+      return 'Confirme su contraseña';
+    }
+
+    return null;
+  }
+
+  // Validaciones para login
+  validarLogin(): string | null {
+    // Validar email
+    if (!this.formData.email || !this.validarEmail(this.formData.email)) {
+      return 'Ingrese un email válido';
+    }
+
+    // Validar contraseña
+    if (!this.formData.password || this.formData.password.length < 1) {
+      return 'Ingrese su contraseña';
+    }
+
+    return null;
+  }
+
+  // Validar formato de email
+  validarEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 } 

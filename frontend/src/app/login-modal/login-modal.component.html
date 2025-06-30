@@ -10,13 +10,20 @@
     <div class="modal-content">
       <!-- Logo y título -->
       <div class="modal-header">
-        <img src="https://seeklogo.com/images/C/columbia-sportswear-logo-6B1B1B7B2A-seeklogo.com.png" alt="Columbia Logo" class="modal-logo" />
+        <img src="/logoColumbia.png" alt="Columbia Logo" class="modal-logo" />
         <h2>{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</h2>
         <p>{{ isLoginMode ? 'Accede a tu cuenta Columbia' : 'Únete a la familia Columbia' }}</p>
       </div>
 
       <!-- Formulario -->
       <form class="login-form" (submit)="onSubmit($event)">
+        <!-- Mensaje de estado -->
+        <div class="message-container" *ngIf="message">
+          <div class="message" [class.error]="isError" [class.success]="!isError">
+            {{ message }}
+          </div>
+        </div>
+
         <!-- Campos adicionales solo para registro -->
         <div class="form-row" *ngIf="!isLoginMode">
           <div class="form-group">
@@ -25,6 +32,7 @@
               type="text" 
               id="firstName" 
               name="firstName" 
+              [(ngModel)]="formData.firstName"
               placeholder="Tu nombre" 
               required
               autocomplete="given-name"
@@ -36,6 +44,7 @@
               type="text" 
               id="lastName" 
               name="lastName" 
+              [(ngModel)]="formData.lastName"
               placeholder="Tu apellido" 
               required
               autocomplete="family-name"
@@ -50,6 +59,7 @@
             type="email" 
             id="email" 
             name="email" 
+            [(ngModel)]="formData.email"
             placeholder="tu@email.com" 
             required
             autocomplete="email"
@@ -63,6 +73,7 @@
             type="tel" 
             id="phone" 
             name="phone" 
+            [(ngModel)]="formData.phone"
             placeholder="+51 999 999 999" 
             required
             autocomplete="tel"
@@ -76,6 +87,7 @@
             type="date" 
             id="birthDate" 
             name="birthDate" 
+            [(ngModel)]="formData.birthDate"
             required
           />
         </div>
@@ -87,6 +99,7 @@
             type="password" 
             id="password" 
             name="password" 
+            [(ngModel)]="formData.password"
             placeholder="••••••••" 
             required
             autocomplete="current-password"
@@ -100,6 +113,7 @@
             type="password" 
             id="confirmPassword" 
             name="confirmPassword" 
+            [(ngModel)]="formData.confirmPassword"
             placeholder="••••••••" 
             required
             autocomplete="new-password"
@@ -135,8 +149,9 @@
         </div>
 
         <!-- Botón de envío -->
-        <button type="submit" class="submit-btn">
-          {{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="isLoading">Cargando...</span>
+          <span *ngIf="!isLoading">{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</span>
         </button>
       </form>
 

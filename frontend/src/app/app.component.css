@@ -1633,3 +1633,26 @@ section {
     flex-direction: column;
   }
 }
+
+/* Estilos para el botón de cerrar sesión */
+.action-btn:has(.action-icon:contains("❌")) {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+  transition: all 0.3s ease;
+}
+
+.action-btn:has(.action-icon:contains("❌")):hover {
+  background-color: #c82333;
+  border-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.action-btn:has(.action-icon:contains("❌")) .action-icon {
+  color: #ff6b6b;
+}
+
+.action-btn:has(.action-icon:contains("❌")):hover .action-icon {
+  color: #ff5252;
+}
