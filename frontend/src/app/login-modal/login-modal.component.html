@@ -1,11 +1,11 @@
 <!-- Modal de Login/Registro -->
-<div class="modal-overlay" *ngIf="isVisible" (click)="onOverlayClick($event)">
+<div class="modal-overlay" *ngIf="isVisible">
   <div class="modal-container">
     <!-- Botón de cerrar -->
     <button class="close-btn" (click)="hideModal()">
       <span>&times;</span>
     </button>
-
+    
     <!-- Contenido del modal -->
     <div class="modal-content">
       <!-- Logo y título -->
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Formulario -->
-      <form class="login-form" (submit)="onSubmit($event)">
+      <form class="login-form">
         <!-- Mensaje de estado -->
         <div class="message-container" *ngIf="message">
           <div class="message" [class.error]="isError" [class.success]="!isError">
@@ -145,11 +145,13 @@
             <span class="checkmark"></span>
             Recordarme
           </label>
-          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+          <a href="#" class="forgot-password" (click)="mostrarFormularioRestablecer(); $event.preventDefault()">
+            ¿Olvidaste tu contraseña?
+          </a>
         </div>
 
         <!-- Botón de envío -->
-        <button type="submit" class="submit-btn" [disabled]="isLoading">
+        <button type="button" class="submit-btn" (click)="onSubmit($event)" [disabled]="isLoading">
           <span *ngIf="isLoading">Cargando...</span>
           <span *ngIf="!isLoading">{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</span>
         </button>
@@ -178,6 +180,93 @@
           {{ isLoginMode ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?' }}
           <button type="button" class="toggle-btn" (click)="toggleMode()">
             {{ isLoginMode ? 'Crear cuenta' : 'Iniciar sesión' }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Restablecer Contraseña -->
+<div class="modal-overlay" *ngIf="mostrarRestablecerContrasena">
+  <div class="modal-container">
+    <!-- Botón de cerrar -->
+    <button class="close-btn" (click)="mostrarFormularioLogin()">
+      <span>&times;</span>
+    </button>
+    
+    <!-- Contenido del modal -->
+    <div class="modal-content">
+      <!-- Logo y título -->
+      <div class="modal-header">
+        <img src="/logoColumbia.png" alt="Columbia Logo" class="modal-logo" />
+        <h2>Restablecer Contraseña</h2>
+        <p>Ingresa tu email y tu nueva contraseña</p>
+      </div>
+
+      <!-- Formulario de restablecer -->
+      <form class="login-form" (submit)="restablecerContrasena(); $event.preventDefault()">
+        <!-- Mensaje de estado -->
+        <div class="message-container" *ngIf="message">
+          <div class="message" [class.error]="isError" [class.success]="!isError">
+            {{ message }}
+          </div>
+        </div>
+
+        <!-- Campo de email -->
+        <div class="form-group">
+          <label for="resetEmail">Correo electrónico</label>
+          <input 
+            type="email" 
+            id="resetEmail" 
+            name="email" 
+            [(ngModel)]="restablecerData.email"
+            placeholder="tu@email.com" 
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <!-- Campo de nueva contraseña -->
+        <div class="form-group">
+          <label for="newPassword">Nueva Contraseña</label>
+          <input 
+            type="password" 
+            id="newPassword" 
+            name="nuevaContrasena" 
+            [(ngModel)]="restablecerData.nuevaContrasena"
+            placeholder="••••••••" 
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <!-- Campo de confirmar nueva contraseña -->
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirmar Nueva Contraseña</label>
+          <input 
+            type="password" 
+            id="confirmNewPassword" 
+            name="confirmarNuevaContrasena" 
+            [(ngModel)]="restablecerData.confirmarNuevaContrasena"
+            placeholder="••••••••" 
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <!-- Botón de envío -->
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="isLoading">Restableciendo...</span>
+          <span *ngIf="!isLoading">Restablecer Contraseña</span>
+        </button>
+      </form>
+
+      <!-- Volver al login -->
+      <div class="mode-toggle">
+        <p>
+          <button type="button" class="toggle-btn" (click)="mostrarFormularioLogin()">
+            ← Volver al login
           </button>
         </p>
       </div>

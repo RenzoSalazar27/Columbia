@@ -55,14 +55,14 @@
             <span class="cart-badge">3</span>
           </button>
           
-          <!-- Botón de cuenta/perfil -->
+          <!-- Botón de cuenta cuando NO está logueado -->
           <button class="action-btn account-btn-modern" (click)="openLoginModal()" title="Mi cuenta" *ngIf="!isLoggedIn">
             <span class="action-icon">👤</span>
             <span class="action-label">Mi cuenta</span>
           </button>
           
           <!-- Botón de perfil cuando está logueado -->
-          <button class="action-btn account-btn-modern" title="Perfil" *ngIf="isLoggedIn">
+          <button class="action-btn account-btn-modern" (click)="openPerfilModal()" title="Perfil" *ngIf="isLoggedIn">
             <span class="action-icon">👤</span>
             <span class="action-label">Perfil</span>
           </button>
@@ -144,3 +144,6 @@
 
 <!-- Modal de Login -->
 <app-login-modal #loginModal></app-login-modal>
+
+<!-- Modal de Perfil -->
+<app-perfil-modal #perfilModal></app-perfil-modal>

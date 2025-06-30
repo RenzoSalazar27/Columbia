@@ -1,0 +1,153 @@
+<!-- Modal de Perfil -->
+<div class="modal-overlay" *ngIf="isVisible">
+  <div class="modal-container">
+    <!-- Botón de cerrar -->
+    <button class="close-btn" (click)="ocultarModal()">
+      <span>&times;</span>
+    </button>
+
+    <!-- Contenido del modal -->
+    <div class="modal-content">
+      <!-- Logo y título -->
+      <div class="modal-header">
+        <img src="/logoColumbia.png" alt="Columbia Logo" class="modal-logo" />
+        <h2>Mi Perfil</h2>
+        <p>Edita tu información personal</p>
+      </div>
+
+      <!-- Mensaje de estado -->
+      <div *ngIf="message" class="message-container">
+        <div class="message" [class.error]="isError" [class.success]="!isError">
+          {{ message }}
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <form class="perfil-form" (submit)="guardarCambios(); $event.preventDefault()">
+        <!-- Información personal -->
+        <div class="form-section">
+          <h3>👤 Información Personal</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input 
+                type="text" 
+                id="nombre" 
+                name="nombre" 
+                [(ngModel)]="formData.nombreUsuario"
+                placeholder="Tu nombre" 
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="apellido">Apellido</label>
+              <input 
+                type="text" 
+                id="apellido" 
+                name="apellido" 
+                [(ngModel)]="formData.apellidoUsuario"
+                placeholder="Tu apellido" 
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">📞 Teléfono</label>
+            <input 
+              type="tel" 
+              id="telefono" 
+              name="telefono" 
+              [(ngModel)]="formData.telefonoUsuario"
+              placeholder="+51 999 999 999" 
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">📧 Correo electrónico</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              [value]="usuario?.emailUsuario"
+              placeholder="tu@email.com" 
+              disabled
+              class="disabled-input"
+            />
+            <small class="form-help">El correo electrónico no se puede modificar</small>
+          </div>
+        </div>
+
+        <!-- Cambio de contraseña -->
+        <div class="form-section">
+          <h3>🔒 Cambiar Contraseña</h3>
+          <p class="section-description">Deja en blanco si no quieres cambiar tu contraseña</p>
+          
+          <div class="form-group">
+            <label for="contrasenaActual">Contraseña actual</label>
+            <input 
+              type="password" 
+              id="contrasenaActual" 
+              name="contrasenaActual" 
+              [(ngModel)]="formData.contrasenaActual"
+              placeholder="••••••••" 
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nuevaContrasena">Nueva contraseña</label>
+              <input 
+                type="password" 
+                id="nuevaContrasena" 
+                name="nuevaContrasena" 
+                [(ngModel)]="formData.nuevaContrasena"
+                placeholder="••••••••" 
+              />
+            </div>
+            <div class="form-group">
+              <label for="confirmarNuevaContrasena">Confirmar nueva contraseña</label>
+              <input 
+                type="password" 
+                id="confirmarNuevaContrasena" 
+                name="confirmarNuevaContrasena" 
+                [(ngModel)]="formData.confirmarNuevaContrasena"
+                placeholder="••••••••" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Direcciones -->
+        <div class="form-section">
+          <h3>📍 Direcciones de Entrega</h3>
+          <p class="section-description">Gestiona tus direcciones de entrega para pedidos</p>
+          <button type="button" class="btn-agregar-direccion" (click)="agregarDireccion()">
+            <span class="btn-icon">➕</span>
+            Agregar dirección
+          </button>
+        </div>
+
+        <!-- Botones -->
+        <div class="button-container">
+          <button 
+            type="button" 
+            class="btn-cancelar" 
+            (click)="ocultarModal()"
+            [disabled]="isLoading">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn-guardar" 
+            [disabled]="isLoading">
+            <span *ngIf="!isLoading">Guardar Cambios</span>
+            <span *ngIf="isLoading" class="loading-spinner">Guardando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

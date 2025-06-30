@@ -2,11 +2,12 @@ import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { LoginModalComponent } from './login-modal/login-modal.component';
+import { PerfilModalComponent } from './perfil-modal/perfil-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, LoginModalComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, LoginModalComponent, PerfilModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -15,6 +16,7 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   // Referencia al modal de login usando ViewChild
   @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
+  @ViewChild(PerfilModalComponent) perfilModal!: PerfilModalComponent;
 
   // Estado de autenticación
   isLoggedIn = false;
@@ -39,6 +41,14 @@ export class AppComponent implements AfterViewInit, OnInit {
   openLoginModal() {
     if (this.loginModal) {
       this.loginModal.showModal();
+    }
+  }
+
+  // Método para abrir el modal de perfil
+  openPerfilModal() {
+    if (this.perfilModal) {
+      this.perfilModal.usuario = this.currentUser;
+      this.perfilModal.mostrarModal();
     }
   }
 

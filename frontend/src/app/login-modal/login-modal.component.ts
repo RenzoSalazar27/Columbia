@@ -15,6 +15,7 @@ export class LoginModalComponent {
 
   isVisible = false;
   isLoginMode = true; // true para login, false para registro
+  mostrarRestablecerContrasena = false;
 
   // Datos del formulario
   formData = {
@@ -25,6 +26,12 @@ export class LoginModalComponent {
     birthDate: '',
     password: '',
     confirmPassword: ''
+  };
+
+  restablecerData = {
+    email: '',
+    nuevaContrasena: '',
+    confirmarNuevaContrasena: ''
   };
 
   // Estado de carga y mensajes
@@ -49,6 +56,16 @@ export class LoginModalComponent {
     this.resetForm();
   }
 
+  mostrarFormularioRestablecer() {
+    this.mostrarRestablecerContrasena = true;
+    this.resetForm();
+  }
+
+  mostrarFormularioLogin() {
+    this.mostrarRestablecerContrasena = false;
+    this.resetForm();
+  }
+
   resetForm() {
     this.formData = {
       firstName: '',
@@ -59,12 +76,18 @@ export class LoginModalComponent {
       password: '',
       confirmPassword: ''
     };
+    this.restablecerData = {
+      email: '',
+      nuevaContrasena: '',
+      confirmarNuevaContrasena: ''
+    };
     this.message = '';
     this.isError = false;
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
+    
     this.isLoading = true;
     this.message = '';
     this.isError = false;
@@ -87,18 +110,18 @@ export class LoginModalComponent {
     }
 
     const loginData = {
-      email: this.formData.email,
-      password: this.formData.password
+      emailUsuario: this.formData.email,
+      contrasenaUsuario: this.formData.password
     };
 
     this.http.post('http://localhost:8082/api/usuarios/login', loginData)
       .subscribe({
         next: (response: any) => {
           // Guardar datos del usuario en localStorage
-          localStorage.setItem('usuario', JSON.stringify(response));
+          localStorage.setItem('usuario', JSON.stringify(response.usuario));
           
           // Emitir evento de cambio de estado
-          this.authStatusChanged.emit(response);
+          this.authStatusChanged.emit(response.usuario);
           
           // Cerrar modal inmediatamente
           this.hideModal();
@@ -142,10 +165,10 @@ export class LoginModalComponent {
       .subscribe({
         next: (response: any) => {
           // Guardar datos del usuario en localStorage
-          localStorage.setItem('usuario', JSON.stringify(response));
+          localStorage.setItem('usuario', JSON.stringify(response.usuario));
           
           // Emitir evento de cambio de estado
-          this.authStatusChanged.emit(response);
+          this.authStatusChanged.emit(response.usuario);
           
           // Cerrar modal inmediatamente
           this.hideModal();
@@ -158,10 +181,50 @@ export class LoginModalComponent {
       });
   }
 
-  onOverlayClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.hideModal();
+  restablecerContrasena() {
+    // Validaciones del frontend
+    const validationError = this.validarRestablecer();
+    if (validationError) {
+      this.isLoading = false;
+      this.message = validationError;
+      this.isError = true;
+      return;
     }
+
+    this.isLoading = true;
+    this.message = '';
+    this.isError = false;
+
+    const restablecerData = {
+      email: this.restablecerData.email,
+      nuevaContrasena: this.restablecerData.nuevaContrasena
+    };
+
+    this.http.post('http://localhost:8082/api/usuarios/restablecer-contrasena', restablecerData)
+      .subscribe({
+        next: (response: any) => {
+          this.isLoading = false;
+          this.message = 'Contraseña restablecida exitosamente';
+          this.isError = false;
+          
+          // Limpiar formulario de restablecer
+          this.restablecerData = {
+            email: '',
+            nuevaContrasena: '',
+            confirmarNuevaContrasena: ''
+          };
+          
+          // Volver al formulario de login después de un delay
+          setTimeout(() => {
+            this.mostrarFormularioLogin();
+          }, 2000);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.message = error.error?.error || 'Error al restablecer la contraseña';
+          this.isError = true;
+        }
+      });
   }
 
   // Validaciones para registro
@@ -228,6 +291,26 @@ export class LoginModalComponent {
     // Validar contraseña
     if (!this.formData.password || this.formData.password.length < 1) {
       return 'Ingrese su contraseña';
+    }
+
+    return null;
+  }
+
+  // Validaciones para restablecer contraseña
+  validarRestablecer(): string | null {
+    // Validar email
+    if (!this.restablecerData.email || !this.validarEmail(this.restablecerData.email)) {
+      return 'Ingrese un email válido';
+    }
+
+    // Validar nueva contraseña
+    if (!this.restablecerData.nuevaContrasena || this.restablecerData.nuevaContrasena.length < 6) {
+      return 'La nueva contraseña debe tener al menos 6 caracteres';
+    }
+
+    // Validar confirmación de contraseña
+    if (this.restablecerData.nuevaContrasena !== this.restablecerData.confirmarNuevaContrasena) {
+      return 'Las contraseñas no coinciden';
     }
 
     return null;
