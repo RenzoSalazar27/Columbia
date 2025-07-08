@@ -233,4 +233,29 @@ export class ProductosComponent implements OnInit, AfterViewInit {
       default: return '🏷️';
     }
   }
+
+  abrirDetalleProducto(producto: Producto) {
+    localStorage.setItem('productoDetalle', JSON.stringify(producto));
+    this.router.navigate([`/detalle-producto/${producto.idProducto}`]);
+  }
+
+  verDetalles(producto: Producto) {
+    localStorage.setItem('productoDetalle', JSON.stringify(producto));
+    this.router.navigate([`/detalle-producto/${producto.idProducto}`]);
+  }
+
+  esFavorito(producto: Producto): boolean {
+    const favs = JSON.parse(localStorage.getItem('favoritosProductos') || '[]');
+    return favs.some((p: Producto) => p.idProducto === producto.idProducto);
+  }
+
+  toggleFavorito(producto: Producto) {
+    let favs = JSON.parse(localStorage.getItem('favoritosProductos') || '[]');
+    if (favs.some((p: Producto) => p.idProducto === producto.idProducto)) {
+      favs = favs.filter((p: Producto) => p.idProducto !== producto.idProducto);
+    } else {
+      favs.push(producto);
+    }
+    localStorage.setItem('favoritosProductos', JSON.stringify(favs));
+  }
 }

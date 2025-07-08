@@ -9,11 +9,17 @@
           </div>
           
           <div class="search-container">
-            <div class="search-box">
-              <input type="text" placeholder="Buscar productos, categorías..." class="search-input" />
-              <button class="search-btn">
+            <form class="search-box" (ngSubmit)="onSearchSubmit()">
+              <input type="text" name="search" [(ngModel)]="searchTerm" placeholder="Buscar productos, categorías..." class="search-input" (input)="onSearchInput()" (blur)="onSearchBlur()" />
+              <button class="search-btn" type="submit">
                 <span class="search-icon">🔍</span>
               </button>
+            </form>
+            <div class="search-sugerencias" *ngIf="mostrarSugerencias">
+              <div class="sugerencia-item" *ngFor="let sug of sugerencias" (mousedown)="onSugerenciaClick(sug)">
+                <span *ngIf="sug.tipo === 'categoria'">📂 {{ sug.nombre }}</span>
+                <span *ngIf="sug.tipo === 'producto'">🛍️ {{ sug.nombre }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -60,7 +66,7 @@
         </nav>
         
         <div class="header-actions-modern">
-          <button class="action-btn" title="Favoritos">
+          <button class="action-btn" [routerLink]="['/favoritos']" title="Favoritos">
             <span class="action-icon">❤️</span>
             <span class="action-label">Favoritos</span>
           </button>

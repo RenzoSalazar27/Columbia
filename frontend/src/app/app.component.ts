@@ -4,11 +4,13 @@ import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { PerfilModalComponent } from './perfil-modal/perfil-modal.component';
 import { CategoriaService, Categoria } from './categoria.service';
+import { ProductoService, Producto } from './producto.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, LoginModalComponent, PerfilModalComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, LoginModalComponent, PerfilModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -28,13 +30,24 @@ export class AppComponent implements AfterViewInit, OnInit {
   categoriasCargadas = false;
   errorCargarCategorias = false;
 
-  constructor(private router: Router, private categoriaService: CategoriaService) {}
+  // Productos para sugerencias
+  productos: Producto[] = [];
+  sugerencias: Array<{ tipo: 'producto' | 'categoria', nombre: string, id?: number }> = [];
+  mostrarSugerencias: boolean = false;
+
+  searchTerm: string = '';
+
+  constructor(private router: Router, private categoriaService: CategoriaService, private productoService: ProductoService) {}
 
   ngOnInit() {
     // Verificar si hay un usuario logueado al cargar la página
     this.checkAuthStatus();
     // Cargar categorías dinámicamente
     this.cargarCategorias();
+    // Cargar todos los productos para sugerencias
+    this.productoService.getProductos().subscribe(productos => {
+      this.productos = productos;
+    });
   }
 
   ngAfterViewInit() {
@@ -144,5 +157,56 @@ export class AppComponent implements AfterViewInit, OnInit {
   // Obtener el nombre de la categoría para la URL
   getNombreCategoriaParaUrl(nombre: string): string {
     return nombre.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  onSearchSubmit() {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) return;
+    // Buscar si coincide con alguna categoría
+    const categoria = this.categorias.find(cat => cat.nombreCategoria.toLowerCase() === term);
+    if (categoria) {
+      this.router.navigate(['/productos', this.getNombreCategoriaParaUrl(categoria.nombreCategoria)]);
+    } else {
+      // Si no es categoría, navegar a productos con query param de búsqueda
+      this.router.navigate(['/productos'], { queryParams: { q: term } });
+    }
+  }
+
+  onSearchInput() {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.sugerencias = [];
+      this.mostrarSugerencias = false;
+      return;
+    }
+    // Buscar coincidencias en categorías
+    const catSugs = this.categorias
+      .filter(cat => cat.nombreCategoria.toLowerCase().includes(term))
+      .map(cat => ({ tipo: 'categoria' as const, nombre: cat.nombreCategoria }));
+    // Buscar coincidencias en productos
+    const prodSugs = this.productos
+      .filter(prod => prod.nombreProducto.toLowerCase().includes(term))
+      .map(prod => ({ tipo: 'producto' as const, nombre: prod.nombreProducto, id: prod.idProducto }));
+    // Unir y limitar a 6 resultados
+    this.sugerencias = [...catSugs, ...prodSugs].slice(0, 6);
+    this.mostrarSugerencias = this.sugerencias.length > 0;
+  }
+
+  onSugerenciaClick(sug: { tipo: 'producto' | 'categoria', nombre: string, id?: number }) {
+    this.mostrarSugerencias = false;
+    this.searchTerm = '';
+    if (sug.tipo === 'categoria') {
+      this.router.navigate(['/productos', this.getNombreCategoriaParaUrl(sug.nombre)]);
+    } else if (sug.tipo === 'producto' && sug.id) {
+      const producto = this.productos.find(p => p.idProducto === sug.id);
+      if (producto) {
+        localStorage.setItem('productoDetalle', JSON.stringify(producto));
+        this.router.navigate([`/detalle-producto/${producto.idProducto}`]);
+      }
+    }
+  }
+
+  onSearchBlur() {
+    setTimeout(() => this.mostrarSugerencias = false, 200);
   }
 }

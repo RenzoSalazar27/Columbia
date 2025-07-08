@@ -1790,3 +1790,44 @@ section {
     justify-content: center;
   }
 }
+
+.search-sugerencias {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(30, 64, 175, 0.13);
+  z-index: 1000;
+  padding: 8px 0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+.sugerencia-item {
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 1.08rem;
+  color: #1a237e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.18s, color 0.18s;
+}
+.sugerencia-item:hover {
+  background: #e3e6f3;
+  color: #388e3c;
+}
+@media (max-width: 600px) {
+  .search-sugerencias {
+    max-width: 98vw;
+    left: 1vw;
+    right: 1vw;
+    top: 52px;
+  }
+  .sugerencia-item {
+    padding: 10px 10px;
+    font-size: 0.98rem;
+  }
+}

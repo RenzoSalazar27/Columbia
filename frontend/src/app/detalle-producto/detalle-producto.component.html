@@ -1,0 +1,45 @@
+<div *ngIf="cargando" class="detalle-producto-container">
+  <div class="detalle-producto-card sin-producto">
+    <div class="detalle-producto-info">
+      <h2>Cargando producto...</h2>
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+<div *ngIf="error && !producto" class="detalle-producto-container">
+  <div class="detalle-producto-card sin-producto">
+    <div class="detalle-producto-info">
+      <h2>Producto no encontrado</h2>
+      <p>No se encontró información para mostrar. Por favor, vuelve a la página principal y selecciona un producto.</p>
+      <div class="detalle-producto-acciones">
+        <button class="btn-atras" (click)="cerrarPestana()">Atrás</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="detalle-producto-container" *ngIf="producto && !cargando && !error">
+  <div class="detalle-producto-card">
+    <div class="detalle-producto-imagen">
+      <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
+    </div>
+    <div class="detalle-producto-info">
+      <h2>{{ producto.nombreProducto }}</h2>
+      <p class="detalle-producto-descripcion">{{ producto.descripcionProducto }}</p>
+      <div class="detalle-producto-meta">
+        <span class="detalle-producto-categoria">Categoría: {{ producto.categoria?.nombreCategoria }}</span>
+        <span class="detalle-producto-marca">Marca: {{ producto.marca?.nombreMarca }}</span>
+      </div>
+      <div class="detalle-producto-especificaciones">
+        <span>Talla: {{ producto.tallaProducto }}</span>
+        <span>Color: {{ producto.colorProducto }}</span>
+        <span>Stock: {{ producto.stockProducto }}</span>
+      </div>
+      <div class="detalle-producto-precio">S/ {{ producto.precioProducto }}</div>
+      <div class="detalle-producto-acciones">
+        <button class="btn-atras" (click)="cerrarPestana()">Atrás</button>
+        <button class="btn-agregar-carrito" disabled>Agregar al carrito</button>
+        <button class="btn-favorito" [class.favorito-activo]="esFavorito(producto)" (click)="toggleFavorito(producto)">&#10084;</button>
+      </div>
+    </div>
+  </div>
+</div> 

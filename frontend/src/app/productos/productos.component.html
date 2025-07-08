@@ -135,9 +135,10 @@
               <span class="product-brand-home">{{ producto.marca?.nombreMarca }}</span>
             </div>
             <div class="product-price">S/ {{ producto.precioProducto }}</div>
-            <button class="btn-product" [disabled]="producto.stockProducto <= 0">
+            <button class="btn-product" [disabled]="producto.stockProducto <= 0" (click)="abrirDetalleProducto(producto)">
               {{ producto.stockProducto > 0 ? 'Ver Producto' : 'Sin stock' }}
             </button>
+            <button class="btn-favorito" [class.favorito-activo]="esFavorito(producto)" (click)="toggleFavorito(producto)">&#10084;</button>
           </div>
         </div>
       </div>
@@ -312,7 +313,7 @@
             </div>
             <div class="product-price-modern">S/ {{ producto.precioProducto }}</div>
             <div class="product-actions">
-              <button class="btn-details">Ver detalles</button>
+              <button class="btn-details" (click)="verDetalles(producto)">Ver detalles</button>
               <button class="btn-add-cart" [disabled]="producto.stockProducto <= 0">
                 {{ producto.stockProducto > 0 ? 'Agregar al carrito' : 'Sin stock' }}
               </button>
