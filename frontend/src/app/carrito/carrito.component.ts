@@ -14,6 +14,7 @@ import { CarritoNotifierService } from '../app.component';
 })
 export class CarritoComponent implements OnInit {
   items: any[] = [];
+  isLoggedIn: boolean = false;
   toastMsg: string = '';
   toastType: 'success' | 'error' = 'success';
   private carritoService = inject(CarritoService);
@@ -21,6 +22,7 @@ export class CarritoComponent implements OnInit {
   private carritoNotifier = inject(CarritoNotifierService);
 
   ngOnInit() {
+    this.isLoggedIn = !!localStorage.getItem('usuario');
     this.carritoNotifier.carritoChanged$.subscribe(() => {
       this.cargarCarrito();
     });
@@ -28,7 +30,12 @@ export class CarritoComponent implements OnInit {
   }
 
   cargarCarrito() {
-    this.carritoService.obtenerCarrito(1).subscribe({
+    const idCarrito = Number(localStorage.getItem('idCarrito'));
+    if (!idCarrito) {
+      this.items = [];
+      return;
+    }
+    this.carritoService.obtenerCarrito(idCarrito).subscribe({
       next: (carrito: any) => {
         this.items = carrito.itemsCarrito || [];
       },
@@ -59,5 +66,9 @@ export class CarritoComponent implements OnInit {
     this.toastMsg = msg;
     this.toastType = type;
     setTimeout(() => this.toastMsg = '', 2000);
+  }
+
+  openLogin() {
+    window.dispatchEvent(new CustomEvent('openLoginModal'));
   }
 } 

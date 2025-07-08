@@ -1,25 +1,31 @@
 <div class="favoritos-container">
   <h2>Mis Favoritos</h2>
-  <div *ngIf="favoritos.length === 0" class="favoritos-vacio">
-    <p>No tienes productos en favoritos aún.</p>
-    <span class="icono-corazon">&#10084;</span>
+  <div *ngIf="!isLoggedIn" class="alerta-login">
+    <p>Debes iniciar sesión para ver tus favoritos.</p>
+    <button (click)="openLogin()">Iniciar sesión</button>
   </div>
-  <div class="favoritos-grid" *ngIf="favoritos.length > 0">
-    <div class="favorito-card" *ngFor="let producto of favoritos">
-      <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
-      <div class="favorito-info">
-        <h3>{{ producto.nombreProducto }}</h3>
-        <p>{{ producto.descripcionProducto }}</p>
-        <div class="favorito-meta">
-          <span>{{ producto.categoria?.nombreCategoria }}</span> |
-          <span>{{ producto.marca?.nombreMarca }}</span>
-        </div>
-        <div class="favorito-precio">S/ {{ producto.precioProducto }}</div>
-        <div class="favorito-acciones">
-          <button class="btn-ver" (click)="verProducto(producto)">Ver detalles</button>
-          <button class="btn-quitar" (click)="quitarFavorito(producto.idProducto)">&#10084; Quitar</button>
+  <ng-container *ngIf="isLoggedIn">
+    <div *ngIf="favoritos.length === 0" class="favoritos-vacio">
+      <p>No tienes productos en favoritos aún.</p>
+      <span class="icono-corazon">&#10084;</span>
+    </div>
+    <div class="favoritos-grid" *ngIf="favoritos.length > 0">
+      <div class="favorito-card" *ngFor="let producto of favoritos">
+        <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
+        <div class="favorito-info">
+          <h3>{{ producto.nombreProducto }}</h3>
+          <p>{{ producto.descripcionProducto }}</p>
+          <div class="favorito-meta">
+            <span>{{ producto.categoria?.nombreCategoria }}</span> |
+            <span>{{ producto.marca?.nombreMarca }}</span>
+          </div>
+          <div class="favorito-precio">S/ {{ producto.precioProducto }}</div>
+          <div class="favorito-acciones">
+            <button class="btn-ver" (click)="verProducto(producto)">Ver detalles</button>
+            <button class="btn-quitar" (click)="quitarFavorito(producto.idProducto)">&#10084; Quitar</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div> 

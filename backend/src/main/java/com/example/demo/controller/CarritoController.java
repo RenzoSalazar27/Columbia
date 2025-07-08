@@ -28,8 +28,19 @@ public class CarritoController {
                       .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<Carrito> obtenerPorUsuarioId(@PathVariable Integer idUsuario) {
+        Optional<Carrito> carrito = service.obtenerPorUsuarioId(idUsuario);
+        return carrito.map(ResponseEntity::ok)
+                      .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public Carrito crear(@RequestBody Carrito carrito) {
+        Optional<Carrito> existente = service.obtenerPorUsuarioId(carrito.getUsuario().getIdUsuario());
+        if (existente.isPresent()) {
+            return existente.get();
+        }
         return service.guardar(carrito);
     }
 

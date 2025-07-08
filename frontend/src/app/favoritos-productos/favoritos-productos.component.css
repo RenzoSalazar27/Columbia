@@ -116,6 +116,28 @@
   background: #e53935;
   color: #fff;
 }
+.alerta-login {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.alerta-login button {
+  background: #ffc107;
+  color: #212529;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-weight: bold;
+}
+.alerta-login button:hover {
+  background: #e0a800;
+}
 
 @media (max-width: 700px) {
   .favoritos-container {

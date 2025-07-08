@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProductoService, Producto } from '../Services/producto.service';
 import { CarritoService } from '../Services/carrito.service';
 import { CarritoNotifierService } from '../app.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-detalle-producto',
@@ -76,20 +77,47 @@ export class DetalleProductoComponent implements OnInit {
 
   agregarAlCarrito() {
     if (!this.producto) return;
+    const idCarrito = Number(localStorage.getItem('idCarrito'));
+    const usuarioStr = localStorage.getItem('usuario');
+    const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+    if (!idCarrito || !usuario) {
+      this.showToast('Debes iniciar sesión para agregar al carrito', 'error');
+      return;
+    }
+    this.toastMsg = '';
     const item = {
-      idCarrito: 1, // Ajustar lógica de idCarrito según usuario
+      idCarrito: idCarrito,
       idProducto: this.producto.idProducto,
-      cantidadItemCarrito: 1
+      cantidadItemCarrito: 1,
+      idUsuario: usuario.idUsuario
     };
-    this.carritoService.agregarItem(item).subscribe({
-      next: () => {
-        this.showToast('Producto agregado al carrito', 'success');
-        this.carritoNotifier.notify();
-      },
-      error: () => {
-        this.showToast('Error al agregar al carrito', 'error');
-      }
-    });
+    let exitoMostrado = false;
+    this.carritoService.agregarItem(item)
+      .pipe(finalize(() => {
+        if (!exitoMostrado && !this.toastMsg) {
+          this.showToast('Error al agregar al carrito', 'error');
+        }
+      }))
+      .subscribe({
+        next: () => {
+          exitoMostrado = true;
+          this.showToast('Producto agregado al carrito', 'success');
+          this.carritoNotifier.notify();
+        },
+        error: (error) => {
+          if (error.status === 200) {
+            this.showToast('Producto agregado al carrito', 'success');
+            this.carritoNotifier.notify();
+            exitoMostrado = true;
+            return;
+          }
+          if (error && error.error && typeof error.error === 'string' && error.error.includes('no pertenece al usuario')) {
+            this.showToast('No puedes agregar productos a un carrito que no es tuyo.', 'error');
+          } else {
+            this.showToast('Error al agregar al carrito', 'error');
+          }
+        }
+      });
   }
 
   showToast(msg: string, type: 'success' | 'error') {

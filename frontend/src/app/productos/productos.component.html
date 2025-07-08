@@ -132,7 +132,7 @@
             <p>{{ producto.descripcionProducto }}</p>
             <div class="product-details-home">
               <span class="product-category-home">{{ producto.categoria?.nombreCategoria }}</span>
-              <span class="product-brand-home">{{ producto.marca?.nombreMarca }}</span>
+              <span class="product-brand-home">{{ producto.marca.nombreMarca }}</span>
             </div>
             <div class="product-price">S/ {{ producto.precioProducto }}</div>
             <button class="btn-product" [disabled]="producto.stockProducto <= 0" (click)="abrirDetalleProducto(producto)">

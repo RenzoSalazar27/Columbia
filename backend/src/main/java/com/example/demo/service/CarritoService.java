@@ -22,6 +22,10 @@ public class CarritoService {
         return repository.findById(id);
     }
 
+    public Optional<Carrito> obtenerPorUsuarioId(Integer idUsuario) {
+        return repository.findByUsuario_IdUsuario(idUsuario);
+    }
+
     public Carrito guardar(Carrito carrito) {
         return repository.save(carrito);
     }

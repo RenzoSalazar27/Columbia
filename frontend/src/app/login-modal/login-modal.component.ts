@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CarritoService } from '../Services/carrito.service';
 
 @Component({
   selector: 'app-login-modal',
@@ -39,7 +40,7 @@ export class LoginModalComponent {
   message = '';
   isError = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private carritoService: CarritoService) {}
 
   showModal() {
     this.isVisible = true;
@@ -124,11 +125,49 @@ export class LoginModalComponent {
             // Guardar datos del usuario en localStorage
             localStorage.setItem('usuario', JSON.stringify(response.usuario));
             
-            // Emitir evento de cambio de estado
-            this.authStatusChanged.emit(response.usuario);
-            
-            // Cerrar modal inmediatamente
-            this.hideModal();
+            // Obtener el carrito del usuario y guardar el idCarrito
+            this.carritoService.obtenerCarritoPorUsuario(response.usuario.idUsuario).subscribe({
+              next: (carrito: any) => {
+                if (carrito && carrito.idCarrito) {
+                  localStorage.setItem('idCarrito', carrito.idCarrito.toString());
+                  this.authStatusChanged.emit(response.usuario);
+                  this.hideModal();
+                } else {
+                  // Si no hay carrito, crearlo
+                  this.carritoService.crearCarrito(response.usuario.idUsuario).subscribe({
+                    next: (nuevoCarrito: any) => {
+                      if (nuevoCarrito && nuevoCarrito.idCarrito) {
+                        localStorage.setItem('idCarrito', nuevoCarrito.idCarrito.toString());
+                      }
+                      this.authStatusChanged.emit(response.usuario);
+                      this.hideModal();
+                    },
+                    error: () => {
+                      localStorage.removeItem('idCarrito');
+                      this.authStatusChanged.emit(response.usuario);
+                      this.hideModal();
+                    }
+                  });
+                }
+              },
+              error: () => {
+                // Si no hay carrito, crearlo
+                this.carritoService.crearCarrito(response.usuario.idUsuario).subscribe({
+                  next: (nuevoCarrito: any) => {
+                    if (nuevoCarrito && nuevoCarrito.idCarrito) {
+                      localStorage.setItem('idCarrito', nuevoCarrito.idCarrito.toString());
+                    }
+                    this.authStatusChanged.emit(response.usuario);
+                    this.hideModal();
+                  },
+                  error: () => {
+                    localStorage.removeItem('idCarrito');
+                    this.authStatusChanged.emit(response.usuario);
+                    this.hideModal();
+                  }
+                });
+              }
+            });
           } else {
             this.message = 'Respuesta inválida del servidor';
             this.isError = true;

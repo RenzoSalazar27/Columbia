@@ -19,6 +19,7 @@ class ItemCarritoDTO {
     public Integer idCarrito;
     public Integer idProducto;
     public Integer cantidadItemCarrito;
+    public Integer idUsuario; // <-- Agregado para validación
 }
 
 @RestController
@@ -50,28 +51,29 @@ public class ItemCarritoController {
     public ResponseEntity<?> crear(@RequestBody ItemCarritoDTO dto) {
         var carritoOpt = carritoRepository.findById(dto.idCarrito);
         var productoOpt = productoRepository.findById(dto.idProducto);
-        Carrito carrito;
         if (carritoOpt.isEmpty()) {
-            // Buscar un usuario no admin para asociar el carrito
-            var usuarios = usuarioRepository.findByEsAdminUsuarioFalse();
-            if (usuarios.isEmpty()) {
-                return ResponseEntity.badRequest().body("No hay usuarios disponibles para crear el carrito");
-            }
-            Usuario usuario = usuarios.get(0);
-            carrito = new Carrito();
-            carrito.setUsuario(usuario);
-            carrito.setFechaCreacionCarrito(LocalDate.now());
-            carrito = carritoRepository.save(carrito);
-        } else {
-            carrito = carritoOpt.get();
+            return ResponseEntity.badRequest().body("El carrito no existe para el usuario");
+        }
+        Carrito carrito = carritoOpt.get();
+        // Validación extra: el usuario del carrito debe coincidir con el usuario logueado
+        if (dto.idUsuario != null && !carrito.getUsuario().getIdUsuario().equals(dto.idUsuario)) {
+            return ResponseEntity.badRequest().body("El carrito no pertenece al usuario");
         }
         if (productoOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Producto no encontrado");
         }
-        ItemCarrito item = new ItemCarrito();
-        item.setCarrito(carrito);
-        item.setProducto(productoOpt.get());
-        item.setCantidadItemCarrito(dto.cantidadItemCarrito);
+        // Buscar si ya existe un item para este producto y carrito
+        Optional<ItemCarrito> existenteOpt = service.obtenerPorCarritoYProducto(carrito.getIdCarrito(), dto.idProducto);
+        ItemCarrito item;
+        if (existenteOpt.isPresent()) {
+            item = existenteOpt.get();
+            item.setCantidadItemCarrito(item.getCantidadItemCarrito() + dto.cantidadItemCarrito);
+        } else {
+            item = new ItemCarrito();
+            item.setCarrito(carrito);
+            item.setProducto(productoOpt.get());
+            item.setCantidadItemCarrito(dto.cantidadItemCarrito);
+        }
         ItemCarrito guardado = service.guardar(item);
         return ResponseEntity.ok(guardado);
     }

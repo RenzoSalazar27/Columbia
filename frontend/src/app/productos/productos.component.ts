@@ -5,6 +5,7 @@ import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { CategoriaService, Categoria } from '../Services/categoria.service';
 import { ProductoService, Producto } from '../Services/producto.service';
 import { CarritoService } from '../Services/carrito.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-productos',
@@ -263,20 +264,49 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   }
 
   agregarAlCarrito(producto: Producto) {
+    const idCarrito = Number(localStorage.getItem('idCarrito'));
+    const usuarioStr = localStorage.getItem('usuario');
+    const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+    if (!idCarrito || !usuario) {
+      this.mensaje = 'Debes iniciar sesión para agregar al carrito';
+      setTimeout(() => this.mensaje = '', 2000);
+      return;
+    }
+    this.mensaje = '';
     const item = {
-      idCarrito: 1, // Ajustar lógica de idCarrito según usuario
+      idCarrito: idCarrito,
       idProducto: producto.idProducto,
-      cantidadItemCarrito: 1
+      cantidadItemCarrito: 1,
+      idUsuario: usuario.idUsuario
     };
-    this.carritoService.agregarItem(item).subscribe({
-      next: () => {
-        this.mensaje = 'Producto agregado al carrito';
-        setTimeout(() => this.mensaje = '', 2000);
-      },
-      error: () => {
-        this.mensaje = 'Error al agregar al carrito';
-        setTimeout(() => this.mensaje = '', 2000);
-      }
-    });
+    let exitoMostrado = false;
+    this.carritoService.agregarItem(item)
+      .pipe(finalize(() => {
+        if (!exitoMostrado && !this.mensaje) {
+          this.mensaje = 'Error al agregar al carrito';
+          setTimeout(() => this.mensaje = '', 3000);
+        }
+      }))
+      .subscribe({
+        next: (res) => {
+          exitoMostrado = true;
+          this.mensaje = 'Producto agregado al carrito';
+          setTimeout(() => this.mensaje = '', 2000);
+        },
+        error: (error) => {
+          if (error.status === 200) {
+            this.mensaje = 'Producto agregado al carrito';
+            setTimeout(() => this.mensaje = '', 2000);
+            exitoMostrado = true;
+            return;
+          }
+          if (error && error.error && typeof error.error === 'string' && error.error.includes('no pertenece al usuario')) {
+            this.mensaje = 'No puedes agregar productos a un carrito que no es tuyo.';
+          } else {
+            this.mensaje = 'Error al agregar al carrito';
+          }
+          setTimeout(() => this.mensaje = '', 3000);
+        }
+      });
   }
 }

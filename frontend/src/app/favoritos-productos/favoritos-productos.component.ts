@@ -12,14 +12,20 @@ import { Producto } from '../Services/producto.service';
 })
 export class FavoritosProductosComponent implements OnInit {
   favoritos: Producto[] = [];
+  isLoggedIn: boolean = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = !!localStorage.getItem('usuario');
     const favs = localStorage.getItem('favoritosProductos');
     if (favs) {
       this.favoritos = JSON.parse(favs);
     }
+  }
+
+  openLogin() {
+    window.dispatchEvent(new CustomEvent('openLoginModal'));
   }
 
   verProducto(producto: Producto) {

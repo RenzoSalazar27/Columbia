@@ -68,6 +68,8 @@ export class AppComponent implements AfterViewInit, OnInit {
       this.actualizarCantidadCarrito();
     });
     this.actualizarCantidadCarrito();
+    // Escuchar evento global para abrir el modal de login
+    window.addEventListener('openLoginModal', () => this.openLoginModal());
   }
 
   ngAfterViewInit() {

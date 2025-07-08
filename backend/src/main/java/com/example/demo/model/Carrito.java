@@ -23,7 +23,6 @@ public class Carrito {
     private LocalDate fechaCreacionCarrito;
 
     @OneToMany(mappedBy = "carrito")
-    @JsonIgnore
     private List<ItemCarrito> itemsCarrito;
 
 	public int getIdCarrito() {

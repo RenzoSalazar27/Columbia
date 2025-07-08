@@ -13,7 +13,11 @@ export class CarritoService {
     return this.http.get(`${this.apiCarrito}/${idCarrito}`);
   }
 
-  agregarItem(item: { idCarrito: number, idProducto: number, cantidadItemCarrito: number }): Observable<any> {
+  obtenerCarritoPorUsuario(idUsuario: number): Observable<any> {
+    return this.http.get(`${this.apiCarrito}/usuario/${idUsuario}`);
+  }
+
+  agregarItem(item: { idCarrito: number, idProducto: number, cantidadItemCarrito: number, idUsuario: number }): Observable<any> {
     return this.http.post(this.apiItems, item);
   }
 
@@ -23,5 +27,12 @@ export class CarritoService {
 
   vaciarCarrito(idCarrito: number): Observable<any> {
     return this.http.delete(`${this.apiCarrito}/${idCarrito}`);
+  }
+
+  crearCarrito(idUsuario: number): Observable<any> {
+    return this.http.post(this.apiCarrito, {
+      usuario: { idUsuario: idUsuario },
+      fechaCreacionCarrito: new Date().toISOString().slice(0, 10)
+    });
   }
 } 
