@@ -1,0 +1,33 @@
+<div class="carrito-bg">
+  <div class="carrito-container">
+    <h2>🛒 Mi Carrito</h2>
+    <table class="carrito-table" *ngIf="items.length > 0; else vacio">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio unitario</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.producto.nombre }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>${{ item.producto.precio | number:'1.2-2' }}</td>
+          <td>${{ (item.producto.precio * item.cantidad) | number:'1.2-2' }}</td>
+          <td><button (click)="eliminarItem(item)">❌</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #vacio>
+      <div class="carrito-vacio">Tu carrito está vacío.</div>
+    </ng-template>
+    <div class="carrito-total" *ngIf="items.length > 0">
+      <span>Total:</span>
+      <span class="total-precio">${{ getTotal() | number:'1.2-2' }}</span>
+    </div>
+  </div>
+  <div *ngIf="toastMsg" class="toast-carrito" [ngClass]="toastType">{{ toastMsg }}</div>
+</div> 

@@ -1,11 +1,20 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { PerfilModalComponent } from './perfil-modal/perfil-modal.component';
-import { CategoriaService, Categoria } from './categoria.service';
-import { ProductoService, Producto } from './producto.service';
+import { CategoriaService, Categoria } from './Services/categoria.service';
+import { ProductoService, Producto } from './Services/producto.service';
 import { FormsModule } from '@angular/forms';
+import { CarritoService } from './Services/carrito.service';
+import { Subject } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class CarritoNotifierService {
+  private carritoChangedSource = new Subject<void>();
+  carritoChanged$ = this.carritoChangedSource.asObservable();
+  notify() { this.carritoChangedSource.next(); }
+}
 
 @Component({
   selector: 'app-root',
@@ -36,8 +45,15 @@ export class AppComponent implements AfterViewInit, OnInit {
   mostrarSugerencias: boolean = false;
 
   searchTerm: string = '';
+  cantidadCarrito: number = 0;
 
-  constructor(private router: Router, private categoriaService: CategoriaService, private productoService: ProductoService) {}
+  constructor(
+    private router: Router,
+    private categoriaService: CategoriaService,
+    private productoService: ProductoService,
+    private carritoService: CarritoService,
+    private carritoNotifier: CarritoNotifierService
+  ) {}
 
   ngOnInit() {
     // Verificar si hay un usuario logueado al cargar la página
@@ -48,6 +64,10 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.productoService.getProductos().subscribe(productos => {
       this.productos = productos;
     });
+    this.carritoNotifier.carritoChanged$.subscribe(() => {
+      this.actualizarCantidadCarrito();
+    });
+    this.actualizarCantidadCarrito();
   }
 
   ngAfterViewInit() {
@@ -208,5 +228,17 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   onSearchBlur() {
     setTimeout(() => this.mostrarSugerencias = false, 200);
+  }
+
+  actualizarCantidadCarrito() {
+    // Suponiendo que el id del carrito es 1 (ajustar según lógica de usuario)
+    this.carritoService.obtenerCarrito(1).subscribe({
+      next: (carrito: any) => {
+        this.cantidadCarrito = carrito.itemsCarrito ? carrito.itemsCarrito.length : 0;
+      },
+      error: () => {
+        this.cantidadCarrito = 0;
+      }
+    });
   }
 }

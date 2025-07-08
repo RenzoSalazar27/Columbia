@@ -1,0 +1,173 @@
+/* Fondo general y centrado */
+.carrito-bg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #f7f7f7 60%, #e3f0ff 100%);
+  padding: 32px 0;
+}
+
+/* Tarjeta principal del carrito */
+.carrito-container {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(30, 64, 175, 0.13);
+  max-width: 900px;
+  margin: 40px auto 48px auto;
+  padding: 38px 32px 32px 32px;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  transition: box-shadow 0.2s;
+}
+.carrito-container h2 {
+  color: #1a237e;
+  margin-bottom: 32px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-align: center;
+}
+
+/* Tabla de productos */
+.carrito-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 1.7rem;
+  background: #f8f9fa;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30, 64, 175, 0.07);
+}
+.carrito-table th, .carrito-table td {
+  padding: 1.1rem 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid #e3e6f3;
+  font-size: 1.08rem;
+}
+.carrito-table th {
+  background: #e3f0ff;
+  color: #1a237e;
+  font-weight: 700;
+  font-size: 1.13rem;
+}
+.carrito-table tr:last-child td {
+  border-bottom: none;
+}
+.carrito-table td button {
+  background: #ffeaea;
+  border: none;
+  color: #e53935;
+  font-size: 1.25rem;
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 1px 4px rgba(229,57,53,0.07);
+}
+.carrito-table td button:hover {
+  background: #e53935;
+  color: #fff;
+}
+
+.carrito-vacio {
+  text-align: center;
+  color: #b0bec5;
+  font-size: 1.25rem;
+  margin: 60px 0 40px 0;
+}
+
+/* Total y acciones */
+.carrito-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a237e;
+  margin-top: 18px;
+  background: #e3f0ff;
+  padding: 18px 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.07);
+}
+.total-precio {
+  color: #388e3c;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.toast-carrito {
+  position: fixed;
+  top: 80px;
+  right: 32px;
+  z-index: 2000;
+  min-width: 220px;
+  background: #fff;
+  color: #1a237e;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(30, 64, 175, 0.13);
+  padding: 18px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  opacity: 0.97;
+  animation: toastIn 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast-carrito.success {
+  border-left: 6px solid #388e3c;
+  color: #388e3c;
+}
+.toast-carrito.error {
+  border-left: 6px solid #e53935;
+  color: #e53935;
+}
+@keyframes toastIn {
+  from { transform: translateY(-40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 0.97; }
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .carrito-container {
+    padding: 18px 2vw 18px 2vw;
+    max-width: 99vw;
+  }
+  .carrito-table th, .carrito-table td {
+    padding: 0.7rem 0.2rem;
+    font-size: 0.98rem;
+  }
+  .carrito-total {
+    font-size: 1.05rem;
+    padding: 12px 8px;
+  }
+  .total-precio {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .carrito-container {
+    padding: 8px 0.5vw;
+    max-width: 99vw;
+  }
+  .carrito-table th, .carrito-table td {
+    padding: 0.5rem 0.1rem;
+    font-size: 0.93rem;
+  }
+  .carrito-total {
+    font-size: 0.98rem;
+    padding: 8px 2px;
+  }
+  .total-precio {
+    font-size: 1.05rem;
+  }
+  .toast-carrito {
+    right: 2vw;
+    left: 2vw;
+    min-width: unset;
+    padding: 12px 8px;
+    font-size: 0.98rem;
+  }
+} 

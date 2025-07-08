@@ -7,8 +7,9 @@ import jakarta.persistence.*;
 @Table(name = "item_carrito")
 public class ItemCarrito {
     @Id
-    @Column(name = "id_item_carrito", length = 10)
-    private String idItemCarrito;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_item_carrito")
+    private int idItemCarrito;
 
     @ManyToOne
     @JoinColumn(name = "id_carrito", nullable = false)
@@ -21,11 +22,11 @@ public class ItemCarrito {
     @Column(name = "cantidad_item_carrito", nullable = false)
     private Integer cantidadItemCarrito;
 
-	public String getIdItemCarrito() {
+	public int getIdItemCarrito() {
 		return idItemCarrito;
 	}
 
-	public void setIdItemCarrito(String idItemCarrito) {
+	public void setIdItemCarrito(int idItemCarrito) {
 		this.idItemCarrito = idItemCarrito;
 	}
 

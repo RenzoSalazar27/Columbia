@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Router } from '@angular/router';
-import { CategoriaService, Categoria } from '../categoria.service';
-import { ClienteService, Cliente } from '../cliente.service';
-import { MarcaService, Marca } from '../marca.service';
-import { ProductoService, Producto } from '../producto.service';
+import { CategoriaService, Categoria } from '../Services/categoria.service';
+import { ClienteService, Cliente } from '../Services/cliente.service';
+import { MarcaService, Marca } from '../Services/marca.service';
+import { ProductoService, Producto } from '../Services/producto.service';
 
 @Component({
   selector: 'app-admin-panel',

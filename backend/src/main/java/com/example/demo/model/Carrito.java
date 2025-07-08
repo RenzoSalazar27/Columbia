@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -10,8 +11,9 @@ import java.util.List;
 @Table(name = "carrito")
 public class Carrito {
     @Id
-    @Column(name = "id_carrito", length = 10)
-    private String idCarrito;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_carrito")
+    private int idCarrito;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
@@ -21,13 +23,14 @@ public class Carrito {
     private LocalDate fechaCreacionCarrito;
 
     @OneToMany(mappedBy = "carrito")
+    @JsonIgnore
     private List<ItemCarrito> itemsCarrito;
 
-	public String getIdCarrito() {
+	public int getIdCarrito() {
 		return idCarrito;
 	}
 
-	public void setIdCarrito(String idCarrito) {
+	public void setIdCarrito(int idCarrito) {
 		this.idCarrito = idCarrito;
 	}
 

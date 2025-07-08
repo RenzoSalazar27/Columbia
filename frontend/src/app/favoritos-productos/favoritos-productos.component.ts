@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Producto } from '../producto.service';
+import { Producto } from '../Services/producto.service';
 
 @Component({
   selector: 'app-favoritos-productos',

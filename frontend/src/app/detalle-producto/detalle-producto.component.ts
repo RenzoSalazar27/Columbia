@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ProductoService, Producto } from '../producto.service';
+import { ProductoService, Producto } from '../Services/producto.service';
+import { CarritoService } from '../Services/carrito.service';
+import { CarritoNotifierService } from '../app.component';
 
 @Component({
   selector: 'app-detalle-producto',
@@ -14,8 +16,16 @@ export class DetalleProductoComponent implements OnInit {
   producto: Producto | null = null;
   cargando = false;
   error = false;
+  mensaje: string = '';
+  toastMsg: string = '';
+  toastType: 'success' | 'error' = 'success';
 
-  constructor(private route: ActivatedRoute, private productoService: ProductoService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private productoService: ProductoService,
+    private carritoService: CarritoService,
+    private carritoNotifier: CarritoNotifierService
+  ) {}
 
   ngOnInit(): void {
     const productoGuardado = localStorage.getItem('productoDetalle');
@@ -62,5 +72,29 @@ export class DetalleProductoComponent implements OnInit {
       favs.push(producto);
     }
     localStorage.setItem('favoritosProductos', JSON.stringify(favs));
+  }
+
+  agregarAlCarrito() {
+    if (!this.producto) return;
+    const item = {
+      idCarrito: 1, // Ajustar lógica de idCarrito según usuario
+      idProducto: this.producto.idProducto,
+      cantidadItemCarrito: 1
+    };
+    this.carritoService.agregarItem(item).subscribe({
+      next: () => {
+        this.showToast('Producto agregado al carrito', 'success');
+        this.carritoNotifier.notify();
+      },
+      error: () => {
+        this.showToast('Error al agregar al carrito', 'error');
+      }
+    });
+  }
+
+  showToast(msg: string, type: 'success' | 'error') {
+    this.toastMsg = msg;
+    this.toastType = type;
+    setTimeout(() => this.toastMsg = '', 2000);
   }
 } 

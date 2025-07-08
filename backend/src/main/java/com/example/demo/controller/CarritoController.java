@@ -22,7 +22,7 @@ public class CarritoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Carrito> obtenerPorId(@PathVariable String id) {
+    public ResponseEntity<Carrito> obtenerPorId(@PathVariable Integer id) {
         Optional<Carrito> carrito = service.obtenerPorId(id);
         return carrito.map(ResponseEntity::ok)
                       .orElse(ResponseEntity.notFound().build());
@@ -34,7 +34,7 @@ public class CarritoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Carrito> actualizar(@PathVariable String id, @RequestBody Carrito carrito) {
+    public ResponseEntity<Carrito> actualizar(@PathVariable Integer id, @RequestBody Carrito carrito) {
         Optional<Carrito> existente = service.obtenerPorId(id);
         if (existente.isPresent()) {
             carrito.setIdCarrito(id);
@@ -45,7 +45,7 @@ public class CarritoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable String id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         Optional<Carrito> carrito = service.obtenerPorId(id);
         if (carrito.isPresent()) {
             service.eliminar(id);

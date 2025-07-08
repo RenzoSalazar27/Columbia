@@ -37,9 +37,11 @@
       <div class="detalle-producto-precio">S/ {{ producto.precioProducto }}</div>
       <div class="detalle-producto-acciones">
         <button class="btn-atras" (click)="cerrarPestana()">Atrás</button>
-        <button class="btn-agregar-carrito" disabled>Agregar al carrito</button>
+        <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">Agregar al carrito</button>
         <button class="btn-favorito" [class.favorito-activo]="esFavorito(producto)" (click)="toggleFavorito(producto)">&#10084;</button>
       </div>
     </div>
   </div>
-</div> 
+</div>
+<div *ngIf="mensaje" class="mensaje-carrito">{{ mensaje }}</div>
+<div *ngIf="toastMsg" class="toast-carrito" [ngClass]="toastType">{{ toastMsg }}</div> 

@@ -139,6 +139,7 @@
               {{ producto.stockProducto > 0 ? 'Ver Producto' : 'Sin stock' }}
             </button>
             <button class="btn-favorito" [class.favorito-activo]="esFavorito(producto)" (click)="toggleFavorito(producto)">&#10084;</button>
+            <button class="btn-agregar-carrito-mini" title="Agregar al carrito" (click)="agregarAlCarrito(producto)">+</button>
           </div>
         </div>
       </div>
@@ -357,3 +358,4 @@
 
 <!-- Modal de Login -->
 <app-login-modal #modalLogin></app-login-modal>
+<div *ngIf="mensaje" class="mensaje-carrito">{{ mensaje }}</div>

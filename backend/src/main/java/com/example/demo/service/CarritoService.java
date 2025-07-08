@@ -18,7 +18,7 @@ public class CarritoService {
         return repository.findAll();
     }
 
-    public Optional<Carrito> obtenerPorId(String id) {
+    public Optional<Carrito> obtenerPorId(Integer id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class CarritoService {
         return repository.save(carrito);
     }
 
-    public void eliminar(String id) {
+    public void eliminar(Integer id) {
         repository.deleteById(id);
     }
 }

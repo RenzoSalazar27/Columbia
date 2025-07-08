@@ -70,10 +70,10 @@
             <span class="action-icon">❤️</span>
             <span class="action-label">Favoritos</span>
           </button>
-          <button class="action-btn" title="Carrito">
+          <button class="action-btn" [routerLink]="['/carrito']" title="Carrito">
             <span class="action-icon">🛒</span>
             <span class="action-label">Carrito</span>
-            <span class="cart-badge">3</span>
+            <span class="cart-badge">{{ cantidadCarrito }}</span>
           </button>
           
           <!-- Botón de cuenta cuando NO está logueado -->

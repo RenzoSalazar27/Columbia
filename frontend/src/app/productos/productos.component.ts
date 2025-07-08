@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
-import { CategoriaService, Categoria } from '../categoria.service';
-import { ProductoService, Producto } from '../producto.service';
+import { CategoriaService, Categoria } from '../Services/categoria.service';
+import { ProductoService, Producto } from '../Services/producto.service';
+import { CarritoService } from '../Services/carrito.service';
 
 @Component({
   selector: 'app-productos',
@@ -18,6 +19,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   tituloCategoria: string = '';
   descripcionCategoria: string = '';
   esHome: boolean = false;
+  mensaje: string = '';
 
   // Categorías dinámicas
   categorias: Categoria[] = [];
@@ -35,7 +37,8 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     private ruta: ActivatedRoute, 
     private router: Router,
     private categoriaService: CategoriaService,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private carritoService: CarritoService
   ) {}
 
   ngOnInit() {
@@ -257,5 +260,23 @@ export class ProductosComponent implements OnInit, AfterViewInit {
       favs.push(producto);
     }
     localStorage.setItem('favoritosProductos', JSON.stringify(favs));
+  }
+
+  agregarAlCarrito(producto: Producto) {
+    const item = {
+      idCarrito: 1, // Ajustar lógica de idCarrito según usuario
+      idProducto: producto.idProducto,
+      cantidadItemCarrito: 1
+    };
+    this.carritoService.agregarItem(item).subscribe({
+      next: () => {
+        this.mensaje = 'Producto agregado al carrito';
+        setTimeout(() => this.mensaje = '', 2000);
+      },
+      error: () => {
+        this.mensaje = 'Error al agregar al carrito';
+        setTimeout(() => this.mensaje = '', 2000);
+      }
+    });
   }
 }

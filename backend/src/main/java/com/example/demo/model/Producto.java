@@ -5,6 +5,7 @@ package com.example.demo.model;
 import java.util.List;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "producto")
@@ -53,6 +54,7 @@ public class Producto {
     private List<DetallePedido> detallesPedido;
 
     @OneToMany(mappedBy = "producto")
+    @JsonIgnore
     private List<ItemCarrito> itemsCarrito;
 
 	public Integer getIdProducto() {
