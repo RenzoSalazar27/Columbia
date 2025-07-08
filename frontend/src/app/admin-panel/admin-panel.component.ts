@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Router } from '@angular/router';
 import { CategoriaService, Categoria } from '../categoria.service';
+import { ClienteService, Cliente } from '../cliente.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -44,13 +45,31 @@ export class AdminPanelComponent implements OnInit {
   tipoNotificacion: 'success' | 'error' | 'warning' = 'success';
   mensajeNotificacion = '';
 
+  // Clientes
+  clientes: Cliente[] = [];
+  cantidadClientes: number = 0;
+  cargandoClientes = false;
+  errorCargarClientes = false;
+  clienteSeleccionado: Cliente | null = null;
+  
+  // Estados de modales para clientes
+  mostrarModalEditarCliente = false;
+  mostrarModalEliminarCliente = false;
+  
+  // Estados de acciones para clientes
+  cargandoEditarCliente = false;
+  cargandoEliminarCliente = false;
+
   constructor(
     private categoriaService: CategoriaService,
+    private clienteService: ClienteService,
     private router: Router
   ) {}
 
   ngOnInit() {
     this.cargarCategorias();
+    this.cargarClientes();
+    this.cargarCantidadClientes();
   }
 
   // Navegación
@@ -72,6 +91,37 @@ export class AdminPanelComponent implements OnInit {
         console.error('Error al cargar categorías:', error);
         this.errorCargarCategorias = true;
         this.cargandoCategorias = false;
+      }
+    });
+  }
+
+  // Cargar clientes desde el backend
+  cargarClientes() {
+    this.cargandoClientes = true;
+    this.errorCargarClientes = false;
+    
+    this.clienteService.getClientes().subscribe({
+      next: (clientes: Cliente[]) => {
+        this.clientes = clientes;
+        this.cargandoClientes = false;
+      },
+      error: (error: any) => {
+        console.error('Error al cargar clientes:', error);
+        this.errorCargarClientes = true;
+        this.cargandoClientes = false;
+      }
+    });
+  }
+
+  // Cargar cantidad de clientes para el dashboard
+  cargarCantidadClientes() {
+    this.clienteService.getCantidadClientes().subscribe({
+      next: (response: any) => {
+        this.cantidadClientes = response.cantidad;
+      },
+      error: (error: any) => {
+        console.error('Error al cargar cantidad de clientes:', error);
+        this.cantidadClientes = 0;
       }
     });
   }
@@ -239,6 +289,86 @@ export class AdminPanelComponent implements OnInit {
 
   cerrarNotificacion() {
     this.mostrarNotificacion = false;
+  }
+
+  // Métodos para clientes
+  editarCliente() {
+    if (this.clienteSeleccionado && 
+        this.clienteSeleccionado.nombreUsuario.trim() && 
+        this.clienteSeleccionado.apellidoUsuario.trim() &&
+        this.clienteSeleccionado.emailUsuario.trim() &&
+        this.clienteSeleccionado.telefonoUsuario.trim()) {
+      
+      this.cargandoEditarCliente = true;
+      
+      this.clienteService.actualizarCliente(
+        this.clienteSeleccionado.idUsuario, 
+        this.clienteSeleccionado
+      ).subscribe({
+        next: (cliente: Cliente) => {
+          const index = this.clientes.findIndex(c => c.idUsuario === cliente.idUsuario);
+          if (index !== -1) {
+            this.clientes[index] = cliente;
+          }
+          this.cerrarModalEditarCliente();
+          this.mostrarNotificacionExito('Cliente actualizado exitosamente');
+          this.cargandoEditarCliente = false;
+        },
+        error: (error: any) => {
+          console.error('Error al actualizar cliente:', error);
+          this.mostrarNotificacionError('Error al actualizar el cliente. Por favor, intenta de nuevo.');
+          this.cargandoEditarCliente = false;
+        }
+      });
+    } else {
+      this.mostrarNotificacionError('Por favor, completa todos los campos obligatorios.');
+    }
+  }
+
+  eliminarCliente() {
+    if (this.clienteSeleccionado) {
+      this.cargandoEliminarCliente = true;
+      
+      this.clienteService.eliminarCliente(this.clienteSeleccionado.idUsuario).subscribe({
+        next: () => {
+          this.clientes = this.clientes.filter(c => c.idUsuario !== this.clienteSeleccionado!.idUsuario);
+          this.cerrarModalEliminarCliente();
+          this.mostrarNotificacionExito('Cliente eliminado exitosamente');
+          this.cargandoEliminarCliente = false;
+          // Actualizar contador
+          this.cargarCantidadClientes();
+        },
+        error: (error: any) => {
+          console.error('Error al eliminar cliente:', error);
+          this.mostrarNotificacionError('Error al eliminar el cliente. Por favor, intenta de nuevo.');
+          this.cargandoEliminarCliente = false;
+        }
+      });
+    }
+  }
+
+  // Abrir modal para editar cliente
+  abrirModalEditarCliente(cliente: Cliente) {
+    this.clienteSeleccionado = { ...cliente };
+    this.mostrarModalEditarCliente = true;
+  }
+
+  // Cerrar modal de editar cliente
+  cerrarModalEditarCliente() {
+    this.mostrarModalEditarCliente = false;
+    this.clienteSeleccionado = null;
+  }
+
+  // Abrir modal para eliminar cliente
+  abrirModalEliminarCliente(cliente: Cliente) {
+    this.clienteSeleccionado = cliente;
+    this.mostrarModalEliminarCliente = true;
+  }
+
+  // Cerrar modal de eliminar cliente
+  cerrarModalEliminarCliente() {
+    this.mostrarModalEliminarCliente = false;
+    this.clienteSeleccionado = null;
   }
 
   // Salir del panel de administrador

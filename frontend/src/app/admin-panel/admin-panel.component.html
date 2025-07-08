@@ -109,9 +109,9 @@
         <div class="stat-card">
           <div class="stat-icon">👥</div>
           <div class="stat-content">
-            <h3 class="stat-value">0</h3>
+            <h3 class="stat-value">{{ cantidadClientes }}</h3>
             <p class="stat-label">Total de Clientes</p>
-            <span class="stat-change positive">+0</span>
+            <span class="stat-change positive">+{{ cantidadClientes }}</span>
           </div>
         </div>
       </div>
@@ -139,9 +139,61 @@
     <section *ngIf="seccionSeleccionada === 'clientes'" class="admin-section">
       <div class="section-header">
         <h2 class="section-title">👥 Clientes</h2>
-        <p class="section-subtitle">Gestión de clientes (funcionalidad en desarrollo)</p>
+        <p class="section-subtitle">Gestión de clientes - Total: {{ clientes.length }}</p>
       </div>
-      <p>Esta sección estará disponible próximamente.</p>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargandoClientes">
+        <div class="loading-spinner"></div>
+        <p>Cargando clientes...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarClientes">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar clientes</h3>
+        <p>No se pudieron cargar los clientes. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarClientes()">Reintentar</button>
+      </div>
+      
+      <!-- Tabla de clientes -->
+      <div class="table-container" *ngIf="!cargandoClientes && !errorCargarClientes">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Fecha Registro</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cliente of clientes">
+              <td>{{ cliente.idUsuario }}</td>
+              <td>{{ cliente.nombreUsuario }}</td>
+              <td>{{ cliente.apellidoUsuario }}</td>
+              <td>{{ cliente.emailUsuario }}</td>
+              <td>{{ cliente.telefonoUsuario }}</td>
+              <td>{{ cliente.direccionUsuario || 'No especificada' }}</td>
+              <td>{{ cliente.fechaRegistroUsuario | date:'dd/MM/yyyy' }}</td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="abrirModalEditarCliente(cliente)" title="Editar">
+                  <span class="btn-icon">✏️</span>
+                  <span class="btn-text">Editar</span>
+                </button>
+                <button class="action-btn delete-btn" (click)="abrirModalEliminarCliente(cliente)" title="Eliminar">
+                  <span class="btn-icon">🗑️</span>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Categorías -->
@@ -300,6 +352,74 @@
             <span *ngIf="!cargandoEliminar">Eliminar</span>
             <span *ngIf="cargandoEliminar" class="loading-spinner-small"></span>
             <span *ngIf="cargandoEliminar">Eliminando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar cliente -->
+  <div *ngIf="mostrarModalEditarCliente && clienteSeleccionado" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Cliente</h3>
+        <button class="modal-close" (click)="cerrarModalEditarCliente()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="editarCliente()" #editarClienteForm="ngForm">
+          <div class="form-group">
+            <label for="nombreCliente">Nombre:</label>
+            <input type="text" id="nombreCliente" name="nombreUsuario" [(ngModel)]="clienteSeleccionado.nombreUsuario" required>
+          </div>
+          <div class="form-group">
+            <label for="apellidoCliente">Apellido:</label>
+            <input type="text" id="apellidoCliente" name="apellidoUsuario" [(ngModel)]="clienteSeleccionado.apellidoUsuario" required>
+          </div>
+          <div class="form-group">
+            <label for="emailCliente">Email:</label>
+            <input type="email" id="emailCliente" name="emailUsuario" [(ngModel)]="clienteSeleccionado.emailUsuario" required>
+          </div>
+          <div class="form-group">
+            <label for="telefonoCliente">Teléfono:</label>
+            <input type="text" id="telefonoCliente" name="telefonoUsuario" [(ngModel)]="clienteSeleccionado.telefonoUsuario" required>
+          </div>
+          <div class="form-group">
+            <label for="direccionCliente">Dirección:</label>
+            <input type="text" id="direccionCliente" name="direccionUsuario" [(ngModel)]="clienteSeleccionado.direccionUsuario">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalEditarCliente()" [disabled]="cargandoEditarCliente">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!editarClienteForm.form.valid || cargandoEditarCliente">
+              <span *ngIf="!cargandoEditarCliente">Guardar</span>
+              <span *ngIf="cargandoEditarCliente" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoEditarCliente">Guardando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar eliminación de cliente -->
+  <div *ngIf="mostrarModalEliminarCliente && clienteSeleccionado" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmar Eliminación</h3>
+        <button class="modal-close" (click)="cerrarModalEliminarCliente()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">
+          <div class="warning-icon">⚠️</div>
+          <h4>¿Estás seguro de que quieres eliminar este cliente?</h4>
+          <p><strong>{{ clienteSeleccionado.nombreUsuario }} {{ clienteSeleccionado.apellidoUsuario }}</strong></p>
+          <p class="warning-text">Esta acción no se puede deshacer y eliminará permanentemente todos los datos del cliente.</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalEliminarCliente()" [disabled]="cargandoEliminarCliente">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="eliminarCliente()" [disabled]="cargandoEliminarCliente">
+            <span *ngIf="!cargandoEliminarCliente">Eliminar</span>
+            <span *ngIf="cargandoEliminarCliente" class="loading-spinner-small"></span>
+            <span *ngIf="cargandoEliminarCliente">Eliminando...</span>
           </button>
         </div>
       </div>

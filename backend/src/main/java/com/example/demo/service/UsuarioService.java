@@ -29,6 +29,19 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    // Listar solo clientes (no administradores)
+    public List<UsuarioDTO> listarClientes() {
+        List<Usuario> clientes = usuarioRepository.findByEsAdminUsuarioFalse();
+        return clientes.stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+    // Contar solo clientes (no administradores)
+    public Long contarClientes() {
+        return usuarioRepository.countByEsAdminUsuarioFalse();
+    }
+
     // Obtener usuario por ID
     public UsuarioDTO obtenerUsuarioPorId(Integer idUsuario) {
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
@@ -215,10 +228,17 @@ public class UsuarioService {
 
     // Eliminar usuario
     public void eliminarUsuario(Integer idUsuario) {
-        if (!usuarioRepository.existsById(idUsuario)) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
             throw new RuntimeException("Usuario con ID " + idUsuario + " no encontrado");
         }
-        usuarioRepository.deleteById(idUsuario);
+        
+        Usuario usuario = usuarioOpt.get();
+        try {
+            usuarioRepository.delete(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al eliminar usuario: " + e.getMessage());
+        }
     }
 
     // Método privado para convertir entidad a DTO

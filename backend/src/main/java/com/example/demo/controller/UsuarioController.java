@@ -198,4 +198,92 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(error);
         }
     }
+
+    // Endpoints para clientes 
+    @GetMapping("/clientes")
+    public ResponseEntity<?> listarClientes() {
+        try {
+            List<UsuarioDTO> clientes = usuarioService.listarClientes();
+            return ResponseEntity.ok(clientes);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @GetMapping("/clientes/cantidad")
+    public ResponseEntity<?> contarClientes() {
+        try {
+            Long cantidad = usuarioService.contarClientes();
+            Map<String, Object> response = new HashMap<>();
+            response.put("cantidad", cantidad);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    // Eliminar cliente 
+    @DeleteMapping("/clientes/{id}")
+    public ResponseEntity<?> eliminarCliente(@PathVariable Integer id) {
+        try {
+            System.out.println("Intentando eliminar cliente con ID: " + id);
+            
+            // Verificar que el usuario existe y no es administrador
+            UsuarioDTO usuario = usuarioService.obtenerUsuarioPorId(id);
+            if (usuario.getEsAdminUsuario()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "No se puede eliminar un administrador");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            System.out.println("Cliente encontrado: " + usuario.getNombreUsuario() + " " + usuario.getApellidoUsuario());
+            
+            usuarioService.eliminarUsuario(id);
+            
+            System.out.println("Cliente eliminado exitosamente");
+            Map<String, String> mensaje = new HashMap<>();
+            mensaje.put("mensaje", "Cliente eliminado exitosamente");
+            return ResponseEntity.ok(mensaje);
+        } catch (RuntimeException e) {
+            System.err.println("Error al eliminar cliente: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            System.err.println("Error inesperado al eliminar cliente: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+
+    // Actualizar cliente (solo clientes, no administradores)
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<?> actualizarCliente(@PathVariable Integer id, @RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            // Verificar que el usuario existe y no es administrador
+            UsuarioDTO usuarioExistente = usuarioService.obtenerUsuarioPorId(id);
+            if (usuarioExistente.getEsAdminUsuario()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "No se puede editar un administrador");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            // Asegurar que no se cambie el rol de administrador
+            usuarioDTO.setEsAdminUsuario(false);
+            
+            UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioDTO);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
 }
