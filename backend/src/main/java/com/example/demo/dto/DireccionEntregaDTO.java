@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 public class DireccionEntregaDTO {
     private String idDireccionEntrega;
-    private String idUsuario;
+    private Integer idUsuario;
     private String direccionEntrega;
     private String ciudadEntrega;
     private String distritoEntrega;
@@ -11,7 +11,7 @@ public class DireccionEntregaDTO {
     // Constructores
     public DireccionEntregaDTO() {}
 
-    public DireccionEntregaDTO(String idDireccionEntrega, String idUsuario, 
+    public DireccionEntregaDTO(String idDireccionEntrega, Integer idUsuario, 
                               String direccionEntrega, String ciudadEntrega, 
                               String distritoEntrega, String referenciaEntrega) {
         this.idDireccionEntrega = idDireccionEntrega;
@@ -31,11 +31,11 @@ public class DireccionEntregaDTO {
         this.idDireccionEntrega = idDireccionEntrega;
     }
 
-    public String getIdUsuario() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 

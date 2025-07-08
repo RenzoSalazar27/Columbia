@@ -1,12 +1,12 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.css']
 })
@@ -117,18 +117,38 @@ export class LoginModalComponent {
     this.http.post('http://localhost:8082/api/usuarios/login', loginData)
       .subscribe({
         next: (response: any) => {
-          // Guardar datos del usuario en localStorage
-          localStorage.setItem('usuario', JSON.stringify(response.usuario));
+          this.isLoading = false;
           
-          // Emitir evento de cambio de estado
-          this.authStatusChanged.emit(response.usuario);
-          
-          // Cerrar modal inmediatamente
-          this.hideModal();
+          // Verificar que la respuesta contiene el usuario
+          if (response && response.usuario) {
+            // Guardar datos del usuario en localStorage
+            localStorage.setItem('usuario', JSON.stringify(response.usuario));
+            
+            // Emitir evento de cambio de estado
+            this.authStatusChanged.emit(response.usuario);
+            
+            // Cerrar modal inmediatamente
+            this.hideModal();
+          } else {
+            this.message = 'Respuesta inválida del servidor';
+            this.isError = true;
+          }
         },
         error: (error) => {
           this.isLoading = false;
-          this.message = error.error?.error || 'Error en el inicio de sesión';
+          console.error('Error de login:', error);
+          
+          if (error.status === 0) {
+            this.message = 'No se puede conectar al servidor. Verifica que el backend esté ejecutándose.';
+          } else if (error.error && error.error.error) {
+            this.message = error.error.error;
+          } else if (error.status === 404) {
+            this.message = 'Endpoint no encontrado. Verifica la URL del backend.';
+          } else if (error.status === 500) {
+            this.message = 'Error interno del servidor.';
+          } else {
+            this.message = 'Error en el inicio de sesión. Intenta de nuevo.';
+          }
           this.isError = true;
         }
       });
@@ -164,18 +184,38 @@ export class LoginModalComponent {
     this.http.post('http://localhost:8082/api/usuarios/registro', registroData)
       .subscribe({
         next: (response: any) => {
-          // Guardar datos del usuario en localStorage
-          localStorage.setItem('usuario', JSON.stringify(response.usuario));
+          this.isLoading = false;
           
-          // Emitir evento de cambio de estado
-          this.authStatusChanged.emit(response.usuario);
-          
-          // Cerrar modal inmediatamente
-          this.hideModal();
+          // Verificar que la respuesta contiene el usuario
+          if (response && response.usuario) {
+            // Guardar datos del usuario en localStorage
+            localStorage.setItem('usuario', JSON.stringify(response.usuario));
+            
+            // Emitir evento de cambio de estado
+            this.authStatusChanged.emit(response.usuario);
+            
+            // Cerrar modal inmediatamente
+            this.hideModal();
+          } else {
+            this.message = 'Respuesta inválida del servidor';
+            this.isError = true;
+          }
         },
         error: (error) => {
           this.isLoading = false;
-          this.message = error.error?.error || 'Error en el registro';
+          console.error('Error de registro:', error);
+          
+          if (error.status === 0) {
+            this.message = 'No se puede conectar al servidor. Verifica que el backend esté ejecutándose.';
+          } else if (error.error && error.error.error) {
+            this.message = error.error.error;
+          } else if (error.status === 404) {
+            this.message = 'Endpoint no encontrado. Verifica la URL del backend.';
+          } else if (error.status === 500) {
+            this.message = 'Error interno del servidor.';
+          } else {
+            this.message = 'Error en el registro. Intenta de nuevo.';
+          }
           this.isError = true;
         }
       });

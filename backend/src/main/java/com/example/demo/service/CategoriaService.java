@@ -18,7 +18,7 @@ public class CategoriaService {
         return repository.findAll();
     }
 
-    public Optional<Categoria> obtenerPorId(String id) {
+    public Optional<Categoria> obtenerPorId(Integer id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class CategoriaService {
         return repository.save(categoria);
     }
 
-    public void eliminar(String id) {
+    public void eliminar(Integer id) {
         repository.deleteById(id);
     }
 }

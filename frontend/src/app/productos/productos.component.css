@@ -1624,3 +1624,51 @@
     order: 1;
   }
 }
+
+/* Estilos para estados de carga y error de categorías */
+.categories-error,
+.categories-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.error-message,
+.loading-message {
+  text-align: center;
+  max-width: 400px;
+}
+
+.error-icon,
+.loading-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.error-message h3,
+.loading-message h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.error-message p,
+.loading-message p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Estilos para categorías deshabilitadas en el header */
+.nav-link-modern.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.nav-link-modern.loading {
+  opacity: 0.8;
+  cursor: wait;
+}

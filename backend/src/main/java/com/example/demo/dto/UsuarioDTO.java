@@ -3,7 +3,7 @@ package com.example.demo.dto;
 import java.time.LocalDate;
 
 public class UsuarioDTO {
-    private String idUsuario;
+    private Integer idUsuario;
     private String nombreUsuario;
     private String apellidoUsuario;
     private String emailUsuario;
@@ -17,7 +17,7 @@ public class UsuarioDTO {
     // Constructores
     public UsuarioDTO() {}
 
-    public UsuarioDTO(String idUsuario, String nombreUsuario, String apellidoUsuario, 
+    public UsuarioDTO(Integer idUsuario, String nombreUsuario, String apellidoUsuario, 
                      String emailUsuario, String contrasenaUsuario, String direccionUsuario, 
                      String telefonoUsuario, LocalDate fechaNacimientoUsuario, LocalDate fechaRegistroUsuario, Boolean esAdminUsuario) {
         this.idUsuario = idUsuario;
@@ -33,11 +33,11 @@ public class UsuarioDTO {
     }
 
     // Getters y Setters
-    public String getIdUsuario() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 

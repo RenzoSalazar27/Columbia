@@ -8,8 +8,9 @@ import java.util.List;
 @Table(name = "categoria")
 public class Categoria {
     @Id
-    @Column(name = "id_categoria", length = 10)
-    private String idCategoria;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_categoria")
+    private Integer idCategoria;
 
     @Column(name = "nombre_categoria", length = 100, nullable = false)
     private String nombreCategoria;
@@ -23,11 +24,11 @@ public class Categoria {
     @OneToMany(mappedBy = "categoria")
     private List<Descuento> descuentos;
 
-	public String getIdCategoria() {
+	public Integer getIdCategoria() {
 		return idCategoria;
 	}
 
-	public void setIdCategoria(String idCategoria) {
+	public void setIdCategoria(Integer idCategoria) {
 		this.idCategoria = idCategoria;
 	}
 

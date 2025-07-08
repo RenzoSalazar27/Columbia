@@ -9,8 +9,9 @@ import java.util.List;
 @Table(name = "usuario")
 public class Usuario {
     @Id
-    @Column(name = "id_usuario", length = 10)
-    private String idUsuario;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
+    private Integer idUsuario;
 
     @Column(name = "nombre_usuario", length = 100, nullable = false)
     private String nombreUsuario;
@@ -21,7 +22,7 @@ public class Usuario {
     @Column(name = "email_usuario", length = 100, nullable = false)
     private String emailUsuario;
 
-    @Column(name = "contraseña_usuario", length = 255, nullable = false)
+    @Column(name = "contrasena_usuario", length = 255, nullable = false)
     private String contrasenaUsuario;
 
     @Column(name = "direccion_usuario", length = 255)
@@ -52,11 +53,11 @@ public class Usuario {
     private List<Pedido> pedidos;
 
     // Getters y Setters
-    public String getIdUsuario() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 

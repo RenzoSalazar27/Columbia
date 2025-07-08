@@ -5,6 +5,6 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 export const routes: Routes = [
   { path: '', component: ProductosComponent },
   { path: 'productos/:categoria', component: ProductosComponent },
-  { path: 'productos', redirectTo: '/productos/hombre', pathMatch: 'full' },
+  { path: 'productos', redirectTo: '/productos/camisetas', pathMatch: 'full' },
   { path: 'admin', component: AdminPanelComponent }
 ];

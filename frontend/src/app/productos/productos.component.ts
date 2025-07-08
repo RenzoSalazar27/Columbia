@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
+import { CategoriaService, Categoria } from '../categoria.service';
 
 interface Producto {
   id: number;
@@ -26,266 +27,118 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   descripcionCategoria: string = '';
   esHome: boolean = false;
 
+  // Categorías dinámicas
+  categorias: Categoria[] = [];
+  categoriasCargadas = false;
+  errorCargarCategorias = false;
+
   // Referencia al modal de login
   @ViewChild(LoginModalComponent) modalLogin!: LoginModalComponent;
 
-  // Productos por categoría
+  // Productos por categoría (mantenemos algunos productos de ejemplo)
   private todosLosProductos: { [key: string]: Producto[] } = {
-    'hombre': [
+    'camisetas': [
       {
         id: 1,
-        nombre: 'Chaqueta Impermeable',
-        precio: 'S/ 899.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
-        descripcion: 'Chaqueta impermeable para actividades outdoor'
+        nombre: 'Camiseta Deportiva',
+        precio: 'S/ 89.00',
+        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
+        categoria: 'camisetas',
+        descripcion: 'Camiseta cómoda para actividades deportivas'
       },
       {
         id: 2,
-        nombre: 'Pantalón Trekking',
-        precio: 'S/ 299.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
-        descripcion: 'Pantalón cómodo para trekking'
-      },
-      {
-        id: 3,
-        nombre: 'Zapatillas Deportivas',
-        precio: 'S/ 419.00',
-        imagen: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
-        descripcion: 'Zapatillas ideales para running'
-      },
-      {
-        id: 4,
         nombre: 'Camiseta Técnica',
         precio: 'S/ 159.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
+        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+        categoria: 'camisetas',
         descripcion: 'Camiseta con tecnología de secado rápido'
-      },
-      {
-        id: 5,
-        nombre: 'Gorro Deportivo',
-        precio: 'S/ 89.00',
-        imagen: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
-        descripcion: 'Gorro para proteger del sol'
-      },
-      {
-        id: 6,
-        nombre: 'Mochila Outdoor',
-        precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-        categoria: 'hombre',
-        descripcion: 'Mochila resistente para aventuras'
       }
     ],
-    'mujer': [
+    'chalecos': [
       {
         id: 7,
-        nombre: 'Leggings Deportivos',
-        precio: 'S/ 249.00',
-        imagen: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Leggings cómodos para yoga y fitness'
+        nombre: 'Chaleco Deportivo',
+        precio: 'S/ 199.00',
+        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+        categoria: 'chalecos',
+        descripcion: 'Chaleco ligero para actividades outdoor'
       },
       {
         id: 8,
-        nombre: 'Top Deportivo',
-        precio: 'S/ 179.00',
-        imagen: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Top con soporte para actividades deportivas'
-      },
-      {
-        id: 9,
-        nombre: 'Chaqueta Ligera',
-        precio: 'S/ 399.00',
+        nombre: 'Chaleco de Seguridad',
+        precio: 'S/ 89.00',
         imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Chaqueta perfecta para primavera'
-      },
-      {
-        id: 10,
-        nombre: 'Zapatillas Running',
-        precio: 'S/ 459.00',
-        imagen: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Zapatillas especializadas para running'
-      },
-      {
-        id: 11,
-        nombre: 'Shorts Deportivos',
-        precio: 'S/ 129.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Shorts cómodos para entrenamiento'
-      },
-      {
-        id: 12,
-        nombre: 'Mochila Deportiva',
-        precio: 'S/ 179.00',
-        imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-        categoria: 'mujer',
-        descripcion: 'Mochila elegante para el gimnasio'
+        categoria: 'chalecos',
+        descripcion: 'Chaleco reflectivo para seguridad'
       }
     ],
-    'ninos': [
+    'pantalones': [
       {
         id: 13,
-        nombre: 'Chaqueta Infantil',
+        nombre: 'Pantalón Deportivo',
         precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Chaqueta resistente para niños'
+        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
+        categoria: 'pantalones',
+        descripcion: 'Pantalón cómodo para deportes'
       },
       {
         id: 14,
-        nombre: 'Pantalón Infantil',
-        precio: 'S/ 149.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Pantalón cómodo para niños activos'
-      },
-      {
-        id: 15,
-        nombre: 'Zapatillas Infantiles',
-        precio: 'S/ 229.00',
-        imagen: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Zapatillas duraderas para niños'
-      },
-      {
-        id: 16,
-        nombre: 'Camiseta Infantil',
-        precio: 'S/ 89.00',
+        nombre: 'Pantalón Casual',
+        precio: 'S/ 159.00',
         imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Camiseta divertida para niños'
+        categoria: 'pantalones',
+        descripcion: 'Pantalón casual para uso diario'
+      }
+    ],
+    'shorts': [
+      {
+        id: 19,
+        nombre: 'Shorts Deportivos',
+        precio: 'S/ 129.00',
+        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
+        categoria: 'shorts',
+        descripcion: 'Shorts cómodos para entrenamiento'
       },
       {
-        id: 17,
-        nombre: 'Gorro Infantil',
-        precio: 'S/ 59.00',
-        imagen: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Gorro colorido para niños'
-      },
-      {
-        id: 18,
-        nombre: 'Mochila Infantil',
-        precio: 'S/ 119.00',
-        imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-        categoria: 'ninos',
-        descripcion: 'Mochila pequeña para niños'
+        id: 20,
+        nombre: 'Shorts Casual',
+        precio: 'S/ 89.00',
+        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
+        categoria: 'shorts',
+        descripcion: 'Shorts casuales para el día a día'
       }
     ],
     'accesorios': [
       {
-        id: 19,
-        nombre: 'Mochila Trekking',
-        precio: 'S/ 299.00',
+        id: 25,
+        nombre: 'Mochila Deportiva',
+        precio: 'S/ 199.00',
         imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
         categoria: 'accesorios',
-        descripcion: 'Mochila resistente para aventuras'
+        descripcion: 'Mochila resistente para deportes'
       },
       {
-        id: 20,
+        id: 26,
         nombre: 'Botella de Agua',
         precio: 'S/ 79.00',
         imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
         categoria: 'accesorios',
         descripcion: 'Botella reutilizable de 1L'
-      },
-      {
-        id: 21,
-        nombre: 'Gafas de Sol',
-        precio: 'S/ 159.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Gafas con protección UV'
-      },
-      {
-        id: 22,
-        nombre: 'Gorra Deportiva',
-        precio: 'S/ 89.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Gorra ajustable para deportes'
-      },
-      {
-        id: 23,
-        nombre: 'Cinturón Deportivo',
-        precio: 'S/ 129.00',
-        imagen: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Cinturón para cargar peso'
-      },
-      {
-        id: 24,
-        nombre: 'Linterna LED',
-        precio: 'S/ 99.00',
-        imagen: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Linterna potente para camping'
-      }
-    ],
-    'calzado': [
-      {
-        id: 25,
-        nombre: 'Zapatillas Trekking',
-        precio: 'S/ 419.00',
-        imagen: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Zapatillas especializadas para trekking'
-      },
-      {
-        id: 26,
-        nombre: 'Botas de Montaña',
-        precio: 'S/ 599.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Botas resistentes para montañismo'
-      },
-      {
-        id: 27,
-        nombre: 'Zapatillas Running',
-        precio: 'S/ 379.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Zapatillas ligeras para running'
-      },
-      {
-        id: 28,
-        nombre: 'Sandalias Deportivas',
-        precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Sandalias cómodas para verano'
-      },
-      {
-        id: 29,
-        nombre: 'Zapatillas Casual',
-        precio: 'S/ 289.00',
-        imagen: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Zapatillas casuales para el día a día'
-      },
-      {
-        id: 30,
-        nombre: 'Botas de Agua',
-        precio: 'S/ 349.00',
-        imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-        categoria: 'calzado',
-        descripcion: 'Botas impermeables para lluvia'
       }
     ]
   };
 
-  constructor(private ruta: ActivatedRoute, private router: Router) {}
+  constructor(
+    private ruta: ActivatedRoute, 
+    private router: Router,
+    private categoriaService: CategoriaService
+  ) {}
 
   ngOnInit() {
+    // Cargar categorías dinámicamente
+    this.cargarCategorias();
+    
     this.ruta.params.subscribe(parametros => {
       this.categoria = parametros['categoria'] || '';
       this.esHome = !this.categoria || this.router.url === '/';
@@ -307,36 +160,81 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     this.iniciarCarrusel();
   }
 
-  private iniciarCarrusel() {
-    const slides = document.querySelectorAll('.carousel-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    let currentSlide = 0;
-
-    const mostrarSlide = (index: number) => {
-      // Ocultar todas las slides
-      slides.forEach(slide => slide.classList.remove('active'));
-      indicators.forEach(indicator => indicator.classList.remove('active'));
-
-      // Mostrar la slide actual
-      slides[index].classList.add('active');
-      indicators[index].classList.add('active');
-    };
-
-    const siguienteSlide = () => {
-      currentSlide = (currentSlide + 1) % slides.length;
-      mostrarSlide(currentSlide);
-    };
-
-    // Cambiar slide cada 7 segundos
-    setInterval(siguienteSlide, 7000);
-
-    // Permitir clic en los indicadores
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        currentSlide = index;
-        mostrarSlide(currentSlide);
-      });
+  // Cargar categorías desde el backend
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe({
+      next: (categorias: Categoria[]) => {
+        this.categorias = categorias;
+        this.categoriasCargadas = true;
+        this.errorCargarCategorias = false;
+      },
+      error: (error: any) => {
+        console.error('Error al cargar categorías:', error);
+        this.categoriasCargadas = true;
+        this.errorCargarCategorias = true;
+        this.categorias = [];
+      }
     });
+  }
+
+  private iniciarCarrusel() {
+    // Verificar que estamos en el home antes de inicializar el carrusel
+    if (!this.esHome) {
+      return;
+    }
+
+    // Esperar un poco para que el DOM se renderice
+    setTimeout(() => {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const indicators = document.querySelectorAll('.indicator');
+      
+      // Verificar que existen los elementos necesarios
+      if (slides.length === 0 || indicators.length === 0) {
+        console.log('Carrusel no encontrado, saltando inicialización');
+        return;
+      }
+
+      let currentSlide = 0;
+
+      const mostrarSlide = (index: number) => {
+        // Verificar que los elementos existen antes de acceder
+        if (slides[index] && indicators[index]) {
+          // Ocultar todas las slides
+          slides.forEach(slide => {
+            if (slide) slide.classList.remove('active');
+          });
+          indicators.forEach(indicator => {
+            if (indicator) indicator.classList.remove('active');
+          });
+
+          // Mostrar la slide actual
+          slides[index].classList.add('active');
+          indicators[index].classList.add('active');
+        }
+      };
+
+      const siguienteSlide = () => {
+        if (slides.length > 0) {
+          currentSlide = (currentSlide + 1) % slides.length;
+          mostrarSlide(currentSlide);
+        }
+      };
+
+      // Cambiar slide cada 7 segundos solo si hay slides
+      if (slides.length > 1) {
+        setInterval(siguienteSlide, 7000);
+      }
+
+      // Permitir clic en los indicadores
+      indicators.forEach((indicator, index) => {
+        if (indicator) {
+          indicator.addEventListener('click', () => {
+            currentSlide = index;
+            mostrarSlide(currentSlide);
+          });
+        }
+      });
+    }, 100); // Pequeño delay para asegurar que el DOM esté listo
   }
 
   // Método para abrir el modal de login
@@ -351,31 +249,35 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   }
 
   establecerInformacionCategoria() {
-    const informacionCategoria: { [key: string]: { titulo: string; descripcion: string } } = {
-      'hombre': {
-        titulo: 'Ropa y Accesorios para Hombre',
-        descripcion: 'Descubre nuestra colección completa de ropa deportiva y accesorios diseñados especialmente para hombres activos.'
-      },
-      'mujer': {
-        titulo: 'Ropa y Accesorios para Mujer',
-        descripcion: 'Explora nuestra línea de ropa deportiva y accesorios creados para mujeres que aman el deporte y la aventura.'
-      },
-      'ninos': {
-        titulo: 'Ropa y Accesorios para Niños',
-        descripcion: 'Encuentra ropa cómoda y divertida para los más pequeños de la casa, perfecta para sus actividades favoritas.'
-      },
-      'accesorios': {
-        titulo: 'Accesorios Deportivos',
-        descripcion: 'Completa tu equipo con nuestros accesorios de alta calidad para todas tus actividades deportivas y outdoor.'
-      },
-      'calzado': {
-        titulo: 'Calzado Deportivo',
-        descripcion: 'Descubre nuestra colección de calzado especializado para diferentes deportes y actividades outdoor.'
-      }
-    };
+    // Buscar la categoría en la lista dinámica
+    const categoriaEncontrada = this.categorias.find(cat => 
+      this.getNombreCategoriaParaUrl(cat.nombreCategoria) === this.categoria
+    );
 
-    const info = informacionCategoria[this.categoria];
-    this.tituloCategoria = info?.titulo || 'Productos';
-    this.descripcionCategoria = info?.descripcion || 'Explora nuestra colección de productos.';
+    if (categoriaEncontrada) {
+      this.tituloCategoria = categoriaEncontrada.nombreCategoria;
+      this.descripcionCategoria = categoriaEncontrada.descripcionCategoria;
+    } else {
+      // Fallback si no se encuentra la categoría
+      this.tituloCategoria = 'Productos';
+      this.descripcionCategoria = 'Explora nuestra colección de productos.';
+    }
+  }
+
+  // Obtener el nombre de la categoría para la URL
+  getNombreCategoriaParaUrl(nombre: string): string {
+    return nombre.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  // Obtener icono para la categoría
+  getIconoCategoria(nombre: string): string {
+    switch (nombre.toLowerCase()) {
+      case 'camisetas': return '👕';
+      case 'chalecos': return '🦺';
+      case 'pantalones': return '👖';
+      case 'shorts': return '🩳';
+      case 'accesorios': return '🎒';
+      default: return '🏷️';
+    }
   }
 }

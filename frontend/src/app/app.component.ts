@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { PerfilModalComponent } from './perfil-modal/perfil-modal.component';
+import { CategoriaService, Categoria } from './categoria.service';
 
 @Component({
   selector: 'app-root',
@@ -22,11 +23,18 @@ export class AppComponent implements AfterViewInit, OnInit {
   isLoggedIn = false;
   currentUser: any = null;
 
-  constructor(private router: Router) {}
+  // Categorías dinámicas
+  categorias: Categoria[] = [];
+  categoriasCargadas = false;
+  errorCargarCategorias = false;
+
+  constructor(private router: Router, private categoriaService: CategoriaService) {}
 
   ngOnInit() {
     // Verificar si hay un usuario logueado al cargar la página
     this.checkAuthStatus();
+    // Cargar categorías dinámicamente
+    this.cargarCategorias();
   }
 
   ngAfterViewInit() {
@@ -37,6 +45,33 @@ export class AppComponent implements AfterViewInit, OnInit {
         this.handleAuthStatusChange(user);
       });
     }
+  }
+
+  // Cargar categorías desde el backend
+  cargarCategorias() {
+    console.log('🔄 Intentando cargar categorías desde:', 'http://localhost:8082/api/categorias');
+    
+    this.categoriaService.getCategorias().subscribe({
+      next: (categorias: Categoria[]) => {
+        console.log('✅ Categorías cargadas exitosamente:', categorias);
+        this.categorias = categorias;
+        this.categoriasCargadas = true;
+        this.errorCargarCategorias = false;
+      },
+      error: (error: any) => {
+        console.error('❌ Error al cargar categorías:', error);
+        console.error('Detalles del error:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url
+        });
+        this.categoriasCargadas = true;
+        this.errorCargarCategorias = true;
+        // Si no se pueden cargar las categorías, usar un array vacío
+        this.categorias = [];
+      }
+    });
   }
 
   // Método para abrir el modal de login
@@ -104,5 +139,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   // Verificar si estamos en la ruta del panel de administrador
   isAdminRoute(): boolean {
     return this.router.url === '/admin';
+  }
+
+  // Obtener el nombre de la categoría para la URL
+  getNombreCategoriaParaUrl(nombre: string): string {
+    return nombre.toLowerCase().replace(/\s+/g, '-');
   }
 }

@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface DireccionEntregaRepository extends JpaRepository<DireccionEntrega, String> {
     // Métodos personalizados
-    List<DireccionEntrega> findByUsuarioIdUsuario(String idUsuario);
-    boolean existsByUsuarioIdUsuario(String idUsuario);
+    List<DireccionEntrega> findByUsuarioIdUsuario(Integer idUsuario);
+    boolean existsByUsuarioIdUsuario(Integer idUsuario);
 
     // Consulta 1: JPQL - Obtener usuarios con sus direcciones de entrega
     @Query("SELECT new com.example.demo.dto.UsuarioDireccionDTO(" +

@@ -57,75 +57,41 @@
         <h2 class="section-title">Explora por Categoría</h2>
         <p class="section-description">Encuentra el equipo perfecto para tu próxima aventura</p>
       </div>
-      <div class="categories-grid-modern">
-        <div class="category-card-modern" routerLink="/productos/hombre">
+      
+      <!-- Categorías dinámicas -->
+      <div class="categories-grid-modern" *ngIf="categoriasCargadas && !errorCargarCategorias && categorias.length > 0">
+        <div class="category-card-modern" 
+             *ngFor="let categoria of categorias" 
+             [routerLink]="['/productos', getNombreCategoriaParaUrl(categoria.nombreCategoria)]">
           <div class="category-image">
-            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80" alt="Hombre" />
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80" [alt]="categoria.nombreCategoria" />
             <div class="category-overlay">
-              <div class="category-icon">🧥</div>
+              <div class="category-icon">{{ getIconoCategoria(categoria.nombreCategoria) }}</div>
             </div>
           </div>
           <div class="category-content">
-            <h3>Hombre</h3>
-            <p>Ropa y equipamiento para aventureros</p>
+            <h3>{{ categoria.nombreCategoria }}</h3>
+            <p>{{ categoria.descripcionCategoria }}</p>
             <span class="category-arrow">→</span>
           </div>
         </div>
-        
-        <div class="category-card-modern" routerLink="/productos/mujer">
-          <div class="category-image">
-            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80" alt="Mujer" />
-            <div class="category-overlay">
-              <div class="category-icon">👩‍🦰</div>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Mujer</h3>
-            <p>Estilo y funcionalidad para exploradoras</p>
-            <span class="category-arrow">→</span>
-          </div>
+      </div>
+      
+      <!-- Mensaje cuando no hay categorías o hay error -->
+      <div class="categories-error" *ngIf="categoriasCargadas && (errorCargarCategorias || categorias.length === 0)">
+        <div class="error-message">
+          <div class="error-icon">⚠️</div>
+          <h3>Categorías no disponibles</h3>
+          <p>No se pudieron cargar las categorías en este momento. Por favor, intenta más tarde.</p>
         </div>
-        
-        <div class="category-card-modern" routerLink="/productos/ninos">
-          <div class="category-image">
-            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80" alt="Niños" />
-            <div class="category-overlay">
-              <div class="category-icon">🧒</div>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Niños</h3>
-            <p>Equipamiento seguro para pequeños aventureros</p>
-            <span class="category-arrow">→</span>
-          </div>
-        </div>
-        
-        <div class="category-card-modern" routerLink="/productos/accesorios">
-          <div class="category-image">
-            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" alt="Accesorios" />
-            <div class="category-overlay">
-              <div class="category-icon">🎒</div>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Accesorios</h3>
-            <p>Complementos esenciales para tu aventura</p>
-            <span class="category-arrow">→</span>
-          </div>
-        </div>
-        
-        <div class="category-card-modern" routerLink="/productos/calzado">
-          <div class="category-image">
-            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80" alt="Calzado" />
-            <div class="category-overlay">
-              <div class="category-icon">🥾</div>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Calzado</h3>
-            <p>Zapatillas y botas para cualquier terreno</p>
-            <span class="category-arrow">→</span>
-          </div>
+      </div>
+      
+      <!-- Loading mientras se cargan las categorías -->
+      <div class="categories-loading" *ngIf="!categoriasCargadas">
+        <div class="loading-message">
+          <div class="loading-icon">⏳</div>
+          <h3>Cargando categorías...</h3>
+          <p>Estamos preparando las mejores opciones para ti.</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,17 @@
 <!-- Panel de Administrador -->
 <div class="admin-container">
+  <!-- Notificación -->
+  <div *ngIf="mostrarNotificacion" class="notification" [class]="'notification-' + tipoNotificacion">
+    <div class="notification-content">
+      <span class="notification-icon">
+        <span *ngIf="tipoNotificacion === 'success'">✅</span>
+        <span *ngIf="tipoNotificacion === 'error'">❌</span>
+        <span *ngIf="tipoNotificacion === 'warning'">⚠️</span>
+      </span>
+      <span class="notification-message">{{ mensajeNotificacion }}</span>
+    </div>
+    <button class="notification-close" (click)="cerrarNotificacion()">×</button>
+  </div>
   <!-- Header del Panel -->
   <header class="admin-header">
     <div class="admin-header-content">
@@ -18,7 +30,7 @@
             <span class="admin-user-role">Super Admin</span>
           </div>
         </div>
-        <button class="admin-logout-btn" routerLink="/">
+        <button class="admin-logout-btn" (click)="salirAdminPanel()">
           <span class="logout-icon">🚪</span>
           Salir
         </button>
@@ -97,9 +109,9 @@
         <div class="stat-card">
           <div class="stat-icon">👥</div>
           <div class="stat-content">
-            <h3 class="stat-value">45</h3>
-            <p class="stat-label">Clientes Nuevos</p>
-            <span class="stat-change positive">+15.2%</span>
+            <h3 class="stat-value">0</h3>
+            <p class="stat-label">Total de Clientes</p>
+            <span class="stat-change positive">+0</span>
           </div>
         </div>
       </div>
@@ -127,57 +139,75 @@
     <section *ngIf="seccionSeleccionada === 'clientes'" class="admin-section">
       <div class="section-header">
         <h2 class="section-title">👥 Clientes</h2>
-        <p class="section-subtitle">Gestión de clientes (contenido estático de ejemplo)</p>
+        <p class="section-subtitle">Gestión de clientes (funcionalidad en desarrollo)</p>
       </div>
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Juan Pérez</td>
-            <td>juanperez&#64;email.com</td>
-            <td>Cliente</td>
-            <td>
-              <button class="action-btn delete-btn" title="Eliminar">🗑️</button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>María García</td>
-            <td>maria&#64;email.com</td>
-            <td>Cliente</td>
-            <td>
-              <button class="action-btn delete-btn" title="Eliminar">🗑️</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <p>Esta sección estará disponible próximamente.</p>
     </section>
 
     <!-- Categorías -->
     <section *ngIf="seccionSeleccionada === 'categorias'" class="admin-section">
       <div class="section-header">
         <h2 class="section-title">🏷️ Categorías</h2>
-        <p class="section-subtitle">Gestión de categorías (contenido estático de ejemplo)</p>
+        <p class="section-subtitle">Gestión de categorías - Total: {{ categorias.length }}</p>
+        <button class="btn-primary" (click)="abrirModalCrearCategoria()">
+          <span class="btn-icon">➕</span>
+          Nueva Categoría
+        </button>
       </div>
-      <p>Listado de categorías, acciones de ejemplo, etc.</p>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargandoCategorias">
+        <div class="loading-spinner"></div>
+        <p>Cargando categorías...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarCategorias">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar categorías</h3>
+        <p>No se pudieron cargar las categorías. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarCategorias()">Reintentar</button>
+      </div>
+      
+      <!-- Tabla de categorías -->
+      <div class="table-container" *ngIf="!cargandoCategorias && !errorCargarCategorias">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let categoria of categorias">
+              <td>{{ categoria.idCategoria }}</td>
+              <td>{{ categoria.nombreCategoria }}</td>
+              <td>{{ categoria.descripcionCategoria }}</td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="abrirModalEditarCategoria(categoria)" title="Editar">
+                  <span class="btn-icon">✏️</span>
+                  <span class="btn-text">Editar</span>
+                </button>
+                <button class="action-btn delete-btn" (click)="abrirModalEliminarCategoria(categoria)" title="Eliminar">
+                  <span class="btn-icon">🗑️</span>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Reportes -->
     <section *ngIf="seccionSeleccionada === 'reportes'" class="admin-section">
       <div class="section-header">
         <h2 class="section-title">📈 Reportes</h2>
-        <p class="section-subtitle">Reportes y estadísticas (contenido estático de ejemplo)</p>
+        <p class="section-subtitle">Análisis y reportes de ventas (contenido estático de ejemplo)</p>
       </div>
-      <p>Gráficas y reportes de ejemplo.</p>
+      <p>Gráficos, estadísticas, reportes de ventas, etc.</p>
     </section>
 
     <!-- Configuración -->
@@ -186,7 +216,93 @@
         <h2 class="section-title">⚙️ Configuración</h2>
         <p class="section-subtitle">Configuración del sistema (contenido estático de ejemplo)</p>
       </div>
-      <p>Opciones de configuración de ejemplo.</p>
+      <p>Configuración de la tienda, preferencias, etc.</p>
     </section>
   </main>
+
+  <!-- Modal para crear categoría -->
+  <div *ngIf="mostrarModalCrearCategoria" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Crear Nueva Categoría</h3>
+        <button class="modal-close" (click)="cerrarModalCrearCategoria()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="crearCategoria()" #crearForm="ngForm">
+          <div class="form-group">
+            <label for="nombreCategoria">Nombre de la Categoría:</label>
+            <input type="text" id="nombreCategoria" name="nombreCategoria" [(ngModel)]="nuevaCategoria.nombreCategoria" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionCategoria">Descripción:</label>
+            <textarea id="descripcionCategoria" name="descripcionCategoria" [(ngModel)]="nuevaCategoria.descripcionCategoria" rows="3" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalCrearCategoria()" [disabled]="cargandoCrear">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!crearForm.form.valid || cargandoCrear">
+              <span *ngIf="!cargandoCrear">Crear</span>
+              <span *ngIf="cargandoCrear" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoCrear">Creando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar categoría -->
+  <div *ngIf="mostrarModalEditarCategoria && categoriaSeleccionada" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Categoría</h3>
+        <button class="modal-close" (click)="cerrarModalEditarCategoria()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="editarCategoria()" #editarForm="ngForm">
+          <div class="form-group">
+            <label for="nombreCategoriaEdit">Nombre de la Categoría:</label>
+            <input type="text" id="nombreCategoriaEdit" name="nombreCategoria" [(ngModel)]="categoriaSeleccionada.nombreCategoria" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionCategoriaEdit">Descripción:</label>
+            <textarea id="descripcionCategoriaEdit" name="descripcionCategoria" [(ngModel)]="categoriaSeleccionada.descripcionCategoria" rows="3" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalEditarCategoria()" [disabled]="cargandoEditar">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!editarForm.form.valid || cargandoEditar">
+              <span *ngIf="!cargandoEditar">Guardar</span>
+              <span *ngIf="cargandoEditar" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoEditar">Guardando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar eliminación -->
+  <div *ngIf="mostrarModalEliminarCategoria && categoriaSeleccionada" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmar Eliminación</h3>
+        <button class="modal-close" (click)="cerrarModalEliminarCategoria()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">
+          <div class="warning-icon">⚠️</div>
+          <h4>¿Estás seguro de que quieres eliminar esta categoría?</h4>
+          <p><strong>{{ categoriaSeleccionada.nombreCategoria }}</strong></p>
+          <p class="warning-text">Esta acción no se puede deshacer y afectará a todos los productos asociados a esta categoría.</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalEliminarCategoria()" [disabled]="cargandoEliminar">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="eliminarCategoria()" [disabled]="cargandoEliminar">
+            <span *ngIf="!cargandoEliminar">Eliminar</span>
+            <span *ngIf="cargandoEliminar" class="loading-spinner-small"></span>
+            <span *ngIf="cargandoEliminar">Eliminando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div> 

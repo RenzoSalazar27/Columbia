@@ -16,7 +16,7 @@
       </div>
 
       <!-- Formulario -->
-      <form class="login-form">
+      <form class="login-form" (submit)="onSubmit($event)">
         <!-- Mensaje de estado -->
         <div class="message-container" *ngIf="message">
           <div class="message" [class.error]="isError" [class.success]="!isError">
@@ -151,7 +151,7 @@
         </div>
 
         <!-- Botón de envío -->
-        <button type="button" class="submit-btn" (click)="onSubmit($event)" [disabled]="isLoading">
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
           <span *ngIf="isLoading">Cargando...</span>
           <span *ngIf="!isLoading">{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</span>
         </button>

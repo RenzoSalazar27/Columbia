@@ -11,6 +11,7 @@ import com.example.demo.service.CategoriaService;
 
 @RestController
 @RequestMapping("/api/categorias")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"}, allowCredentials = "true")
 public class CategoriaController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtenerPorId(@PathVariable String id) {
+    public ResponseEntity<Categoria> obtenerPorId(@PathVariable Integer id) {
         Optional<Categoria> categoria = service.obtenerPorId(id);
         return categoria.map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build());
@@ -34,7 +35,7 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> actualizar(@PathVariable String id, @RequestBody Categoria categoria) {
+    public ResponseEntity<Categoria> actualizar(@PathVariable Integer id, @RequestBody Categoria categoria) {
         Optional<Categoria> existente = service.obtenerPorId(id);
         if (existente.isPresent()) {
             categoria.setIdCategoria(id);
@@ -45,7 +46,7 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable String id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         Optional<Categoria> categoria = service.obtenerPorId(id);
         if (categoria.isPresent()) {
             service.eliminar(id);
@@ -54,4 +55,5 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

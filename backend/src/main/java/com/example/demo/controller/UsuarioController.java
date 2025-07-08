@@ -18,11 +18,19 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"}, allowCredentials = "true")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        Map<String, String> response = new HashMap<>();
+        response.put("mensaje", "Backend funcionando correctamente");
+        response.put("timestamp", java.time.LocalDateTime.now().toString());
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping
     public ResponseEntity<?> listarTodosLosUsuarios() {
@@ -37,7 +45,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable String id) {
+    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Integer id) {
         try {
             UsuarioDTO usuario = usuarioService.obtenerUsuarioPorId(id);
             return ResponseEntity.ok(usuario);
@@ -106,20 +114,46 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping("/restablecer-contrasena")
+    public ResponseEntity<?> restablecerContrasena(@RequestBody Map<String, String> restablecerData) {
+        try {
+            String email = restablecerData.get("email");
+            String nuevaContrasena = restablecerData.get("nuevaContrasena");
+            
+            if (email == null || nuevaContrasena == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Email y nueva contraseña son requeridos");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            Map<String, Object> response = usuarioService.restablecerContrasena(email, nuevaContrasena);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
     @PostMapping("/validar-contrasena")
     public ResponseEntity<?> validarContrasena(@RequestBody Map<String, String> validacionData) {
         try {
-            String idUsuario = validacionData.get("idUsuario");
+            String idUsuarioStr = validacionData.get("idUsuario");
             String contrasenaActual = validacionData.get("contrasenaActual");
             
-            if (idUsuario == null || contrasenaActual == null) {
+            if (idUsuarioStr == null || contrasenaActual == null) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "ID de usuario y contraseña actual son requeridos");
                 return ResponseEntity.badRequest().body(error);
             }
             
+            Integer idUsuario = Integer.parseInt(idUsuarioStr);
             Map<String, Object> response = usuarioService.validarContrasena(idUsuario, contrasenaActual);
             return ResponseEntity.ok(response);
+        } catch (NumberFormatException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "ID de usuario debe ser un número válido");
+            return ResponseEntity.badRequest().body(error);
         } catch (RuntimeException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
@@ -140,7 +174,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarUsuario(@PathVariable String id, @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioDTO usuarioDTO) {
         try {
             UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioDTO);
             return ResponseEntity.ok(usuarioActualizado);
@@ -152,7 +186,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarUsuario(@PathVariable String id) {
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
         try {
             usuarioService.eliminarUsuario(id);
             Map<String, String> mensaje = new HashMap<>();

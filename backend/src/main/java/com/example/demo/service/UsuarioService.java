@@ -30,7 +30,7 @@ public class UsuarioService {
     }
 
     // Obtener usuario por ID
-    public UsuarioDTO obtenerUsuarioPorId(String idUsuario) {
+    public UsuarioDTO obtenerUsuarioPorId(Integer idUsuario) {
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         if (usuario.isEmpty()) {
             throw new RuntimeException("Usuario con ID " + idUsuario + " no encontrado");
@@ -69,18 +69,15 @@ public class UsuarioService {
             throw new RuntimeException("El email " + emailUsuario + " ya está registrado");
         }
 
-        // Generar ID único
-        String idUsuario = generarIdUsuario();
-
-        // Crear entidad Usuario
+        // Crear entidad Usuario (ID se autoincrementará)
         Usuario usuario = new Usuario();
-        usuario.setIdUsuario(idUsuario);
         usuario.setNombreUsuario(nombreUsuario);
         usuario.setApellidoUsuario(apellidoUsuario);
         usuario.setEmailUsuario(emailUsuario);
         usuario.setTelefonoUsuario(telefonoUsuario);
         usuario.setFechaNacimientoUsuario(fechaNacimientoUsuario);
         usuario.setContrasenaUsuario(contrasenaUsuario);
+        usuario.setDireccionUsuario(""); // Campo opcional, se puede actualizar después
         usuario.setFechaRegistroUsuario(LocalDate.now());
         usuario.setEsAdminUsuario(false);
 
@@ -95,8 +92,29 @@ public class UsuarioService {
         return response;
     }
 
+    // Restablecer contraseña
+    public Map<String, Object> restablecerContrasena(String emailUsuario, String nuevaContrasena) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmailUsuario(emailUsuario);
+        
+        if (usuario.isEmpty()) {
+            throw new RuntimeException("No se encontró un usuario con el email " + emailUsuario);
+        }
+        
+        Usuario usuarioEncontrado = usuario.get();
+        usuarioEncontrado.setContrasenaUsuario(nuevaContrasena);
+        
+        // Guardar cambios
+        Usuario usuarioActualizado = usuarioRepository.save(usuarioEncontrado);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("mensaje", "Contraseña restablecida exitosamente");
+        response.put("usuario", convertirADTO(usuarioActualizado));
+        
+        return response;
+    }
+
     // Validar contraseña actual
-    public Map<String, Object> validarContrasena(String idUsuario, String contrasenaActual) {
+    public Map<String, Object> validarContrasena(Integer idUsuario, String contrasenaActual) {
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         
         if (usuario.isEmpty()) {
@@ -116,25 +134,19 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public void eliminar(String idUsuario) {
+    public void eliminar(Integer idUsuario) {
         usuarioRepository.deleteById(idUsuario);
     }
 
     // Crear usuario
     public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {
-        // Validar que el ID no exista
-        if (usuarioRepository.existsById(usuarioDTO.getIdUsuario())) {
-            throw new RuntimeException("El usuario con ID " + usuarioDTO.getIdUsuario() + " ya existe");
-        }
-
         // Validar que el email no exista
         if (usuarioRepository.existsByEmailUsuario(usuarioDTO.getEmailUsuario())) {
             throw new RuntimeException("El email " + usuarioDTO.getEmailUsuario() + " ya está registrado");
         }
 
-        // Crear entidad Usuario
+        // Crear entidad Usuario (ID se autoincrementará)
         Usuario usuario = new Usuario();
-        usuario.setIdUsuario(usuarioDTO.getIdUsuario());
         usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
         usuario.setApellidoUsuario(usuarioDTO.getApellidoUsuario());
         usuario.setEmailUsuario(usuarioDTO.getEmailUsuario());
@@ -155,7 +167,7 @@ public class UsuarioService {
     }
 
     // Actualizar usuario
-    public UsuarioDTO actualizarUsuario(String idUsuario, UsuarioDTO usuarioDTO) {
+    public UsuarioDTO actualizarUsuario(Integer idUsuario, UsuarioDTO usuarioDTO) {
         Optional<Usuario> usuarioExistente = usuarioRepository.findById(idUsuario);
         
         if (usuarioExistente.isEmpty()) {
@@ -202,44 +214,26 @@ public class UsuarioService {
     }
 
     // Eliminar usuario
-    public void eliminarUsuario(String idUsuario) {
+    public void eliminarUsuario(Integer idUsuario) {
         if (!usuarioRepository.existsById(idUsuario)) {
             throw new RuntimeException("Usuario con ID " + idUsuario + " no encontrado");
         }
         usuarioRepository.deleteById(idUsuario);
     }
 
-    // Método auxiliar para generar ID único
-    private String generarIdUsuario() {
-        // Generar un ID de 8 caracteres alfanuméricos
-        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder id = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int index = (int) (Math.random() * caracteres.length());
-            id.append(caracteres.charAt(index));
-        }
-        
-        // Verificar que el ID no exista
-        if (usuarioRepository.existsById(id.toString())) {
-            return generarIdUsuario(); // Recursión si el ID ya existe
-        }
-        
-        return id.toString();
-    }
-
-    // Método auxiliar para convertir entidad a DTO
+    // Método privado para convertir entidad a DTO
     private UsuarioDTO convertirADTO(Usuario usuario) {
-        return new UsuarioDTO(
-            usuario.getIdUsuario(),
-            usuario.getNombreUsuario(),
-            usuario.getApellidoUsuario(),
-            usuario.getEmailUsuario(),
-            usuario.getContrasenaUsuario(),
-            usuario.getDireccionUsuario(),
-            usuario.getTelefonoUsuario(),
-            usuario.getFechaNacimientoUsuario(),
-            usuario.getFechaRegistroUsuario(),
-            usuario.getEsAdminUsuario()
-        );
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setIdUsuario(usuario.getIdUsuario());
+        dto.setNombreUsuario(usuario.getNombreUsuario());
+        dto.setApellidoUsuario(usuario.getApellidoUsuario());
+        dto.setEmailUsuario(usuario.getEmailUsuario());
+        dto.setContrasenaUsuario(usuario.getContrasenaUsuario());
+        dto.setDireccionUsuario(usuario.getDireccionUsuario());
+        dto.setTelefonoUsuario(usuario.getTelefonoUsuario());
+        dto.setFechaNacimientoUsuario(usuario.getFechaNacimientoUsuario());
+        dto.setFechaRegistroUsuario(usuario.getFechaRegistroUsuario());
+        dto.setEsAdminUsuario(usuario.getEsAdminUsuario());
+        return dto;
     }
 }

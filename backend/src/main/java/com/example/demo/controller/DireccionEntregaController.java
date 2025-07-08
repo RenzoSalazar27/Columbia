@@ -122,7 +122,7 @@ public class DireccionEntregaController {
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<?> obtenerDireccionesPorUsuario(@PathVariable String idUsuario) {
+    public ResponseEntity<?> obtenerDireccionesPorUsuario(@PathVariable Integer idUsuario) {
         try {
             List<DireccionEntregaDTO> direcciones = direccionEntregaService.obtenerDireccionesPorUsuario(idUsuario);
             return ResponseEntity.ok(direcciones);

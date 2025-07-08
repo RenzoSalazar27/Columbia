@@ -133,7 +133,7 @@ public class DireccionEntregaService {
     }
 
     // Obtener direcciones por usuario
-    public List<DireccionEntregaDTO> obtenerDireccionesPorUsuario(String idUsuario) {
+    public List<DireccionEntregaDTO> obtenerDireccionesPorUsuario(Integer idUsuario) {
         List<DireccionEntrega> direcciones = direccionEntregaRepository.findByUsuarioIdUsuario(idUsuario);
         return direcciones.stream()
                 .map(this::convertirADTO)
@@ -155,7 +155,7 @@ public class DireccionEntregaService {
     // Método auxiliar para convertir Object[] a UsuarioDireccionDTO (para SQL nativo)
     private UsuarioDireccionDTO convertirObjectArrayADTO(Object[] resultado) {
         return new UsuarioDireccionDTO(
-            (String) resultado[0], // idUsuario
+            (Integer) resultado[0], // idUsuario
             (String) resultado[1], // nombreUsuario
             (String) resultado[2], // apellidoUsuario
             (String) resultado[3], // emailUsuario
