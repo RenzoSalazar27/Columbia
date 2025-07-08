@@ -61,9 +61,9 @@
         <span class="nav-icon">🏷️</span>
         Categorías
       </a>
-      <a (click)="seleccionarSeccion('reportes'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'reportes'" class="admin-nav-item">
-        <span class="nav-icon">📈</span>
-        Reportes
+      <a (click)="seleccionarSeccion('marcas'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'marcas'" class="admin-nav-item">
+        <span class="nav-icon">🏭</span>
+        Marcas
       </a>
       <a (click)="seleccionarSeccion('configuracion'); $event.preventDefault()" [class.active]="seccionSeleccionada === 'configuracion'" class="admin-nav-item">
         <span class="nav-icon">⚙️</span>
@@ -253,13 +253,61 @@
       </div>
     </section>
 
-    <!-- Reportes -->
-    <section *ngIf="seccionSeleccionada === 'reportes'" class="admin-section">
+    <!-- Marcas -->
+    <section *ngIf="seccionSeleccionada === 'marcas'" class="admin-section">
       <div class="section-header">
-        <h2 class="section-title">📈 Reportes</h2>
-        <p class="section-subtitle">Análisis y reportes de ventas (contenido estático de ejemplo)</p>
+        <h2 class="section-title">🏭 Marcas</h2>
+        <p class="section-subtitle">Gestión de marcas - Total: {{ marcas.length }}</p>
+        <button class="btn-primary" (click)="abrirModalCrearMarca()">
+          <span class="btn-icon">➕</span>
+          Nueva Marca
+        </button>
       </div>
-      <p>Gráficos, estadísticas, reportes de ventas, etc.</p>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargandoMarcas">
+        <div class="loading-spinner"></div>
+        <p>Cargando marcas...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarMarcas">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar marcas</h3>
+        <p>No se pudieron cargar las marcas. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarMarcas()">Reintentar</button>
+      </div>
+      
+      <!-- Tabla de marcas -->
+      <div class="table-container" *ngIf="!cargandoMarcas && !errorCargarMarcas">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let marca of marcas">
+              <td>{{ marca.idMarca }}</td>
+              <td>{{ marca.nombreMarca }}</td>
+              <td>{{ marca.descripcionMarca }}</td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="abrirModalEditarMarca(marca)" title="Editar">
+                  <span class="btn-icon">✏️</span>
+                  <span class="btn-text">Editar</span>
+                </button>
+                <button class="action-btn delete-btn" (click)="abrirModalEliminarMarca(marca)" title="Eliminar">
+                  <span class="btn-icon">🗑️</span>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Configuración -->
@@ -420,6 +468,92 @@
             <span *ngIf="!cargandoEliminarCliente">Eliminar</span>
             <span *ngIf="cargandoEliminarCliente" class="loading-spinner-small"></span>
             <span *ngIf="cargandoEliminarCliente">Eliminando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear marca -->
+  <div *ngIf="mostrarModalCrearMarca" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Crear Nueva Marca</h3>
+        <button class="modal-close" (click)="cerrarModalCrearMarca()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="crearMarca()" #crearMarcaForm="ngForm">
+          <div class="form-group">
+            <label for="nombreMarca">Nombre de la Marca:</label>
+            <input type="text" id="nombreMarca" name="nombreMarca" [(ngModel)]="nuevaMarca.nombreMarca" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionMarca">Descripción:</label>
+            <textarea id="descripcionMarca" name="descripcionMarca" [(ngModel)]="nuevaMarca.descripcionMarca" rows="3" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalCrearMarca()" [disabled]="cargandoCrearMarca">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!crearMarcaForm.form.valid || cargandoCrearMarca">
+              <span *ngIf="!cargandoCrearMarca">Crear</span>
+              <span *ngIf="cargandoCrearMarca" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoCrearMarca">Creando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar marca -->
+  <div *ngIf="mostrarModalEditarMarca && marcaSeleccionada" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Marca</h3>
+        <button class="modal-close" (click)="cerrarModalEditarMarca()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="editarMarca()" #editarMarcaForm="ngForm">
+          <div class="form-group">
+            <label for="nombreMarcaEdit">Nombre de la Marca:</label>
+            <input type="text" id="nombreMarcaEdit" name="nombreMarca" [(ngModel)]="marcaSeleccionada.nombreMarca" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionMarcaEdit">Descripción:</label>
+            <textarea id="descripcionMarcaEdit" name="descripcionMarca" [(ngModel)]="marcaSeleccionada.descripcionMarca" rows="3" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalEditarMarca()" [disabled]="cargandoEditarMarca">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!editarMarcaForm.form.valid || cargandoEditarMarca">
+              <span *ngIf="!cargandoEditarMarca">Guardar</span>
+              <span *ngIf="cargandoEditarMarca" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoEditarMarca">Guardando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar eliminación de marca -->
+  <div *ngIf="mostrarModalEliminarMarca && marcaSeleccionada" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmar Eliminación</h3>
+        <button class="modal-close" (click)="cerrarModalEliminarMarca()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">
+          <div class="warning-icon">⚠️</div>
+          <h4>¿Estás seguro de que quieres eliminar esta marca?</h4>
+          <p><strong>{{ marcaSeleccionada.nombreMarca }}</strong></p>
+          <p class="warning-text">Esta acción no se puede deshacer y afectará a todos los productos asociados a esta marca.</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalEliminarMarca()" [disabled]="cargandoEliminarMarca">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="eliminarMarca()" [disabled]="cargandoEliminarMarca">
+            <span *ngIf="!cargandoEliminarMarca">Eliminar</span>
+            <span *ngIf="cargandoEliminarMarca" class="loading-spinner-small"></span>
+            <span *ngIf="cargandoEliminarMarca">Eliminando...</span>
           </button>
         </div>
       </div>

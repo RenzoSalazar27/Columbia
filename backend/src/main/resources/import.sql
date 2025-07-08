@@ -16,3 +16,9 @@ INSERT INTO categoria (nombre_categoria, descripcion_categoria) VALUES ('Pantalo
 INSERT INTO categoria (nombre_categoria, descripcion_categoria) VALUES ('Shorts', 'Shorts deportivos, casuales y de baño');
 INSERT INTO categoria (nombre_categoria, descripcion_categoria) VALUES ('Accesorios', 'Accesorios deportivos y complementos esenciales');
 
+INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Nike', 'Just Do It - Innovación y rendimiento deportivo');
+INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Adidas', 'Impossible is Nothing - Calidad y estilo deportivo');
+INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Puma', 'Forever Faster - Diseño y tecnología deportiva');
+INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('The North Face', 'Never Stop Exploring - Equipamiento para aventuras');
+INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Columbia Sportswear', 'Tested Tough - Ropa para actividades al aire libre');
+

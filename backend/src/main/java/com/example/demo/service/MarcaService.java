@@ -18,7 +18,7 @@ public class MarcaService {
         return repository.findAll();
     }
 
-    public Optional<Marca> obtenerPorId(String id) {
+    public Optional<Marca> obtenerPorId(Integer id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class MarcaService {
         return repository.save(marca);
     }
 
-    public void eliminar(String id) {
+    public void eliminar(Integer id) {
         repository.deleteById(id);
     }
 }
