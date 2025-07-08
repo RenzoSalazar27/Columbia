@@ -39,21 +39,25 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    // Cargar categorías dinámicamente
     this.cargarCategorias();
-    
     this.ruta.params.subscribe(parametros => {
       this.categoria = parametros['categoria'] || '';
       this.esHome = !this.categoria || this.router.url === '/';
-      
       if (this.esHome) {
-        // Si es home, cargar productos destacados
         this.cargarProductosDestacados();
         this.tituloCategoria = '';
         this.descripcionCategoria = '';
       } else {
-        this.cargarProductos();
-        this.establecerInformacionCategoria();
+        // Esperar a que las categorías estén cargadas antes de cargar productos
+        const intentarCargarProductos = () => {
+          if (this.categoriasCargadas) {
+            this.cargarProductos();
+            this.establecerInformacionCategoria();
+          } else {
+            setTimeout(intentarCargarProductos, 50);
+          }
+        };
+        intentarCargarProductos();
       }
     });
   }
