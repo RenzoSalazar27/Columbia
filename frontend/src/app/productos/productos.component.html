@@ -104,44 +104,50 @@
         <h2 class="section-title">Productos Destacados</h2>
         <p class="section-description">Los favoritos de nuestros aventureros</p>
       </div>
-      <div class="products-showcase">
-        <div class="product-showcase-card">
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="!productosCargados">
+        <div class="loading-spinner"></div>
+        <p>Cargando productos destacados...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarProductos">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar productos</h3>
+        <p>No se pudieron cargar los productos destacados. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarProductosDestacados()">Reintentar</button>
+      </div>
+
+      <!-- Grid de productos destacados -->
+      <div class="products-showcase" *ngIf="productosCargados && !errorCargarProductos && productos.length > 0">
+        <div class="product-showcase-card" *ngFor="let producto of productos">
           <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80" alt="Chaqueta Premium" />
-            <div class="product-badge">Más Vendido</div>
+            <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
+            <div class="product-badge" *ngIf="producto.stockProducto > 0">En Stock</div>
+            <div class="product-badge out-of-stock" *ngIf="producto.stockProducto <= 0">Sin Stock</div>
           </div>
           <div class="product-info">
-            <h3>Chaqueta Impermeable Premium</h3>
-            <p>Tecnología avanzada para condiciones extremas</p>
-            <div class="product-price">S/ 899.00</div>
-            <button class="btn-product">Ver Producto</button>
+            <h3>{{ producto.nombreProducto }}</h3>
+            <p>{{ producto.descripcionProducto }}</p>
+            <div class="product-details-home">
+              <span class="product-category-home">{{ producto.categoria?.nombreCategoria }}</span>
+              <span class="product-brand-home">{{ producto.marca?.nombreMarca }}</span>
+            </div>
+            <div class="product-price">S/ {{ producto.precioProducto }}</div>
+            <button class="btn-product" [disabled]="producto.stockProducto <= 0">
+              {{ producto.stockProducto > 0 ? 'Ver Producto' : 'Sin stock' }}
+            </button>
           </div>
         </div>
-        
-        <div class="product-showcase-card">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=500&q=80" alt="Zapatillas Trekking" />
-            <div class="product-badge">Nuevo</div>
-          </div>
-          <div class="product-info">
-            <h3>Zapatillas Trekking Pro</h3>
-            <p>Máximo confort para largas caminatas</p>
-            <div class="product-price">S/ 419.00</div>
-            <button class="btn-product">Ver Producto</button>
-          </div>
-        </div>
-        
-        <div class="product-showcase-card">
-          <div class="product-image">
-            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80" alt="Mochila Outdoor" />
-            <div class="product-badge">Popular</div>
-          </div>
-          <div class="product-info">
-            <h3>Mochila Outdoor Elite</h3>
-            <p>Capacidad y durabilidad excepcionales</p>
-            <div class="product-price">S/ 299.00</div>
-            <button class="btn-product">Ver Producto</button>
-          </div>
+      </div>
+
+      <!-- Mensaje cuando no hay productos -->
+      <div class="no-products-home" *ngIf="productosCargados && !errorCargarProductos && productos.length === 0">
+        <div class="no-products-message">
+          <div class="no-products-icon">📦</div>
+          <h3>No hay productos destacados</h3>
+          <p>No se encontraron productos para mostrar.</p>
         </div>
       </div>
     </div>
@@ -267,25 +273,60 @@
   <!-- Grid de productos moderno -->
   <section class="products-modern">
     <div class="container">
-      <div class="products-grid-modern">
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="!productosCargados">
+        <div class="loading-spinner"></div>
+        <p>Cargando productos...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarProductos">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar productos</h3>
+        <p>No se pudieron cargar los productos. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarProductos()">Reintentar</button>
+      </div>
+
+      <!-- Grid de productos -->
+      <div class="products-grid-modern" *ngIf="productosCargados && !errorCargarProductos">
         <div class="product-card-modern" *ngFor="let producto of productos">
           <div class="product-image-modern">
-            <img [src]="producto.imagen" [alt]="producto.nombre" />
+            <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80'" [alt]="producto.nombreProducto" />
             <div class="product-overlay">
               <button class="btn-quick-view">Vista rápida</button>
               <button class="btn-add-wishlist">❤</button>
             </div>
-            <div class="product-badge-modern">Nuevo</div>
+            <div class="product-badge-modern" *ngIf="producto.stockProducto > 0">En Stock</div>
+            <div class="product-badge-modern out-of-stock" *ngIf="producto.stockProducto <= 0">Sin Stock</div>
           </div>
           <div class="product-info-modern">
-            <h3 class="product-name">{{ producto.nombre }}</h3>
-            <p class="product-description">{{ producto.descripcion }}</p>
-            <div class="product-price-modern">{{ producto.precio }}</div>
+            <h3 class="product-name">{{ producto.nombreProducto }}</h3>
+            <p class="product-description">{{ producto.descripcionProducto }}</p>
+            <div class="product-details">
+              <span class="product-category">{{ producto.categoria?.nombreCategoria }}</span>
+              <span class="product-brand">{{ producto.marca?.nombreMarca }}</span>
+            </div>
+            <div class="product-specs">
+              <span class="product-size">Talla: {{ producto.tallaProducto }}</span>
+              <span class="product-color">Color: {{ producto.colorProducto }}</span>
+            </div>
+            <div class="product-price-modern">S/ {{ producto.precioProducto }}</div>
             <div class="product-actions">
               <button class="btn-details">Ver detalles</button>
-              <button class="btn-add-cart">Agregar al carrito</button>
+              <button class="btn-add-cart" [disabled]="producto.stockProducto <= 0">
+                {{ producto.stockProducto > 0 ? 'Agregar al carrito' : 'Sin stock' }}
+              </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay productos -->
+      <div class="no-products" *ngIf="productosCargados && !errorCargarProductos && productos.length === 0">
+        <div class="no-products-message">
+          <div class="no-products-icon">📦</div>
+          <h3>No hay productos disponibles</h3>
+          <p>No se encontraron productos en esta categoría.</p>
         </div>
       </div>
     </div>

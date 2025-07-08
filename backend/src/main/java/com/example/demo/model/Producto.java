@@ -10,8 +10,9 @@ import java.math.BigDecimal;
 @Table(name = "producto")
 public class Producto {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
-    private String idProducto;
+    private Integer idProducto;
 
     @Column(name = "nombre_producto", nullable = false, length = 100)
     private String nombreProducto;
@@ -25,7 +26,7 @@ public class Producto {
     @Column(name = "stock_producto", nullable = false)
     private int stockProducto;
 
-    @Column(name = "imagen_producto", nullable = false, length = 255)
+    @Column(name = "imagen_producto", nullable = true, length = 255)
     private String imagenProducto;
 
     @Column(name = "talla_producto", nullable = false, length = 10)
@@ -54,11 +55,11 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     private List<ItemCarrito> itemsCarrito;
 
-	public String getIdProducto() {
+	public Integer getIdProducto() {
 		return idProducto;
 	}
 
-	public void setIdProducto(String idProducto) {
+	public void setIdProducto(Integer idProducto) {
 		this.idProducto = idProducto;
 	}
 

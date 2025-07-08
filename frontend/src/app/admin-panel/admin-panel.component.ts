@@ -6,6 +6,7 @@ import { RouterModule, Router } from '@angular/router';
 import { CategoriaService, Categoria } from '../categoria.service';
 import { ClienteService, Cliente } from '../cliente.service';
 import { MarcaService, Marca } from '../marca.service';
+import { ProductoService, Producto } from '../producto.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -84,10 +85,41 @@ export class AdminPanelComponent implements OnInit {
   cargandoEditarMarca = false;
   cargandoEliminarMarca = false;
 
+  // Productos
+  productos: Producto[] = [];
+  productoSeleccionado: Producto | null = null;
+  nuevoProducto: Producto = {
+    idProducto: 0,
+    nombreProducto: '',
+    descripcionProducto: '',
+    precioProducto: 0,
+    stockProducto: 0,
+    imagenProducto: null,
+    tallaProducto: '',
+    colorProducto: '',
+    categoria: { idCategoria: 0, nombreCategoria: '', descripcionCategoria: '' },
+    marca: { idMarca: 0, nombreMarca: '', descripcionMarca: '' }
+  };
+  
+  // Estados de modales para productos
+  mostrarModalCrearProducto = false;
+  mostrarModalEditarProducto = false;
+  mostrarModalEliminarProducto = false;
+  
+  // Estados de carga para productos
+  cargandoProductos = false;
+  errorCargarProductos = false;
+  
+  // Estados de acciones para productos
+  cargandoCrearProducto = false;
+  cargandoEditarProducto = false;
+  cargandoEliminarProducto = false;
+
   constructor(
     private categoriaService: CategoriaService,
     private clienteService: ClienteService,
     private marcaService: MarcaService,
+    private productoService: ProductoService,
     private router: Router
   ) {}
 
@@ -96,6 +128,7 @@ export class AdminPanelComponent implements OnInit {
     this.cargarClientes();
     this.cargarCantidadClientes();
     this.cargarMarcas();
+    this.cargarProductos();
   }
 
   // Navegación
@@ -170,6 +203,177 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+  // Cargar productos desde el backend
+  cargarProductos() {
+    this.cargandoProductos = true;
+    this.errorCargarProductos = false;
+    
+    this.productoService.getProductos().subscribe({
+      next: (productos: Producto[]) => {
+        this.productos = productos;
+        this.cargandoProductos = false;
+      },
+      error: (error: any) => {
+        console.error('Error al cargar productos:', error);
+        this.errorCargarProductos = true;
+        this.cargandoProductos = false;
+      }
+    });
+  }
+
+  // Crear nuevo producto
+  crearProducto() {
+    if (this.nuevoProducto.nombreProducto.trim() && this.nuevoProducto.descripcionProducto.trim()) {
+      this.cargandoCrearProducto = true;
+      
+      // Crear objeto sin ID para evitar conflictos
+      const productoParaCrear = {
+        nombreProducto: this.nuevoProducto.nombreProducto,
+        descripcionProducto: this.nuevoProducto.descripcionProducto,
+        precioProducto: this.nuevoProducto.precioProducto,
+        stockProducto: this.nuevoProducto.stockProducto,
+        imagenProducto: this.nuevoProducto.imagenProducto,
+        tallaProducto: this.nuevoProducto.tallaProducto,
+        colorProducto: this.nuevoProducto.colorProducto,
+        categoria: this.nuevoProducto.categoria,
+        marca: this.nuevoProducto.marca
+      };
+      this.productoService.crearProducto(productoParaCrear).subscribe({
+        next: (producto: Producto) => {
+          this.productos.push(producto);
+          this.cerrarModalCrearProducto();
+          this.limpiarNuevoProducto();
+          this.mostrarNotificacionExito('Producto creado exitosamente');
+          this.cargandoCrearProducto = false;
+        },
+        error: (error: any) => {
+          console.error('Error al crear producto:', error);
+          let mensajeError = 'Error al crear el producto. Por favor, intenta de nuevo.';
+          if (error.error && error.error.message) {
+            mensajeError = error.error.message;
+          } else if (error.message) {
+            mensajeError = error.message;
+          }
+          this.mostrarNotificacionError(mensajeError);
+          this.cargandoCrearProducto = false;
+        }
+      });
+    } else {
+      this.mostrarNotificacionError('Por favor, completa todos los campos.');
+    }
+  }
+
+  // Editar producto
+  editarProducto() {
+    if (this.productoSeleccionado && this.productoSeleccionado.nombreProducto.trim() && this.productoSeleccionado.descripcionProducto.trim()) {
+      this.cargandoEditarProducto = true;
+      
+      this.productoService.actualizarProducto(this.productoSeleccionado.idProducto, this.productoSeleccionado).subscribe({
+        next: (producto: Producto) => {
+          const index = this.productos.findIndex(p => p.idProducto === producto.idProducto);
+          if (index !== -1) {
+            this.productos[index] = producto;
+          }
+          this.cerrarModalEditarProducto();
+          this.mostrarNotificacionExito('Producto actualizado exitosamente');
+          this.cargandoEditarProducto = false;
+        },
+        error: (error: any) => {
+          console.error('Error al actualizar producto:', error);
+          let mensajeError = 'Error al actualizar el producto. Por favor, intenta de nuevo.';
+          if (error.error && error.error.message) {
+            mensajeError = error.error.message;
+          } else if (error.message) {
+            mensajeError = error.message;
+          }
+          this.mostrarNotificacionError(mensajeError);
+          this.cargandoEditarProducto = false;
+        }
+      });
+    } else {
+      this.mostrarNotificacionError('Por favor, completa todos los campos.');
+    }
+  }
+
+  // Eliminar producto
+  eliminarProducto() {
+    if (this.productoSeleccionado) {
+      this.cargandoEliminarProducto = true;
+      
+      this.productoService.eliminarProducto(this.productoSeleccionado.idProducto).subscribe({
+        next: () => {
+          this.productos = this.productos.filter(p => p.idProducto !== this.productoSeleccionado!.idProducto);
+          this.cerrarModalEliminarProducto();
+          this.mostrarNotificacionExito('Producto eliminado exitosamente');
+          this.cargandoEliminarProducto = false;
+        },
+        error: (error: any) => {
+          console.error('Error al eliminar producto:', error);
+          let mensajeError = 'Error al eliminar el producto. Por favor, intenta de nuevo.';
+          if (error.error && error.error.message) {
+            mensajeError = error.error.message;
+          } else if (error.message) {
+            mensajeError = error.message;
+          }
+          this.mostrarNotificacionError(mensajeError);
+          this.cargandoEliminarProducto = false;
+        }
+      });
+    }
+  }
+
+  // Abrir modal para crear producto
+  abrirModalCrearProducto() {
+    this.mostrarModalCrearProducto = true;
+    this.limpiarNuevoProducto();
+  }
+
+  // Cerrar modal para crear producto
+  cerrarModalCrearProducto() {
+    this.mostrarModalCrearProducto = false;
+    this.limpiarNuevoProducto();
+  }
+
+  // Abrir modal para editar producto
+  abrirModalEditarProducto(producto: Producto) {
+    this.productoSeleccionado = { ...producto };
+    this.mostrarModalEditarProducto = true;
+  }
+
+  // Cerrar modal para editar producto
+  cerrarModalEditarProducto() {
+    this.mostrarModalEditarProducto = false;
+    this.productoSeleccionado = null;
+  }
+
+  // Abrir modal para eliminar producto
+  abrirModalEliminarProducto(producto: Producto) {
+    this.productoSeleccionado = producto;
+    this.mostrarModalEliminarProducto = true;
+  }
+
+  // Cerrar modal para eliminar producto
+  cerrarModalEliminarProducto() {
+    this.mostrarModalEliminarProducto = false;
+    this.productoSeleccionado = null;
+  }
+
+  // Limpiar formulario de nuevo producto
+  limpiarNuevoProducto() {
+    this.nuevoProducto = {
+      idProducto: 0,
+      nombreProducto: '',
+      descripcionProducto: '',
+      precioProducto: 0,
+      stockProducto: 0,
+      imagenProducto: null,
+      tallaProducto: '',
+      colorProducto: '',
+      categoria: { idCategoria: 0, nombreCategoria: '', descripcionCategoria: '' },
+      marca: { idMarca: 0, nombreMarca: '', descripcionMarca: '' }
+    };
+  }
+
   // Crear nueva categoría
   crearCategoria() {
     if (this.nuevaCategoria.nombreCategoria.trim() && this.nuevaCategoria.descripcionCategoria.trim()) {
@@ -180,7 +384,6 @@ export class AdminPanelComponent implements OnInit {
         nombreCategoria: this.nuevaCategoria.nombreCategoria,
         descripcionCategoria: this.nuevaCategoria.descripcionCategoria
       };
-      
       this.categoriaService.crearCategoria(categoriaParaCrear as Categoria).subscribe({
         next: (categoria: Categoria) => {
           this.categorias.push(categoria);
@@ -425,7 +628,6 @@ export class AdminPanelComponent implements OnInit {
         nombreMarca: this.nuevaMarca.nombreMarca,
         descripcionMarca: this.nuevaMarca.descripcionMarca
       };
-      
       this.marcaService.crearMarca(marcaParaCrear as Marca).subscribe({
         next: (marca: Marca) => {
           this.marcas.push(marca);

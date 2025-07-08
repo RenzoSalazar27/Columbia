@@ -121,9 +121,69 @@
     <section *ngIf="seccionSeleccionada === 'productos'" class="admin-section">
       <div class="section-header">
         <h2 class="section-title">👕 Productos</h2>
-        <p class="section-subtitle">Gestión de productos (contenido estático de ejemplo)</p>
+        <p class="section-subtitle">Gestión de productos - Total: {{ productos.length }}</p>
+        <button class="btn-primary" (click)="abrirModalCrearProducto()">
+          <span class="btn-icon">➕</span>
+          Nuevo Producto
+        </button>
       </div>
-      <p>Listado de productos, acciones de ejemplo, etc.</p>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargandoProductos">
+        <div class="loading-spinner"></div>
+        <p>Cargando productos...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="errorCargarProductos">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar productos</h3>
+        <p>No se pudieron cargar los productos. Por favor, intenta de nuevo.</p>
+        <button class="btn-primary" (click)="cargarProductos()">Reintentar</button>
+      </div>
+      
+      <!-- Tabla de productos -->
+      <div class="table-container" *ngIf="!cargandoProductos && !errorCargarProductos">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Talla</th>
+              <th>Color</th>
+              <th>Categoría</th>
+              <th>Marca</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of productos">
+              <td>{{ producto.idProducto }}</td>
+              <td>{{ producto.nombreProducto }}</td>
+              <td>{{ producto.descripcionProducto }}</td>
+              <td>S/ {{ producto.precioProducto }}</td>
+              <td>{{ producto.stockProducto }}</td>
+              <td>{{ producto.tallaProducto }}</td>
+              <td>{{ producto.colorProducto }}</td>
+              <td>{{ producto.categoria?.nombreCategoria }}</td>
+              <td>{{ producto.marca?.nombreMarca }}</td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="abrirModalEditarProducto(producto)" title="Editar">
+                  <span class="btn-icon">✏️</span>
+                  <span class="btn-text">Editar</span>
+                </button>
+                <button class="action-btn delete-btn" (click)="abrirModalEliminarProducto(producto)" title="Eliminar">
+                  <span class="btn-icon">🗑️</span>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Pedidos -->
@@ -554,6 +614,172 @@
             <span *ngIf="!cargandoEliminarMarca">Eliminar</span>
             <span *ngIf="cargandoEliminarMarca" class="loading-spinner-small"></span>
             <span *ngIf="cargandoEliminarMarca">Eliminando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear producto -->
+  <div *ngIf="mostrarModalCrearProducto" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Crear Nuevo Producto</h3>
+        <button class="modal-close" (click)="cerrarModalCrearProducto()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="crearProducto()" #crearProductoForm="ngForm">
+          <div class="form-group">
+            <label for="nombreProducto">Nombre del Producto:</label>
+            <input type="text" id="nombreProducto" name="nombreProducto" [(ngModel)]="nuevoProducto.nombreProducto" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionProducto">Descripción:</label>
+            <textarea id="descripcionProducto" name="descripcionProducto" [(ngModel)]="nuevoProducto.descripcionProducto" rows="3" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="precioProducto">Precio:</label>
+              <input type="number" id="precioProducto" name="precioProducto" [(ngModel)]="nuevoProducto.precioProducto" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="stockProducto">Stock:</label>
+              <input type="number" id="stockProducto" name="stockProducto" [(ngModel)]="nuevoProducto.stockProducto" min="0" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tallaProducto">Talla:</label>
+              <input type="text" id="tallaProducto" name="tallaProducto" [(ngModel)]="nuevoProducto.tallaProducto" required>
+            </div>
+            <div class="form-group">
+              <label for="colorProducto">Color:</label>
+              <input type="text" id="colorProducto" name="colorProducto" [(ngModel)]="nuevoProducto.colorProducto" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categoriaProducto">Categoría:</label>
+              <select id="categoriaProducto" name="categoria" [(ngModel)]="nuevoProducto.categoria" required>
+                <option value="">Seleccionar categoría</option>
+                <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria.nombreCategoria }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="marcaProducto">Marca:</label>
+              <select id="marcaProducto" name="marca" [(ngModel)]="nuevoProducto.marca" required>
+                <option value="">Seleccionar marca</option>
+                <option *ngFor="let marca of marcas" [value]="marca">{{ marca.nombreMarca }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="imagenProducto">URL de Imagen (opcional):</label>
+            <input type="text" id="imagenProducto" name="imagenProducto" [(ngModel)]="nuevoProducto.imagenProducto">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalCrearProducto()" [disabled]="cargandoCrearProducto">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!crearProductoForm.form.valid || cargandoCrearProducto">
+              <span *ngIf="!cargandoCrearProducto">Crear</span>
+              <span *ngIf="cargandoCrearProducto" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoCrearProducto">Creando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar producto -->
+  <div *ngIf="mostrarModalEditarProducto && productoSeleccionado" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Producto</h3>
+        <button class="modal-close" (click)="cerrarModalEditarProducto()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="editarProducto()" #editarProductoForm="ngForm">
+          <div class="form-group">
+            <label for="nombreProductoEdit">Nombre del Producto:</label>
+            <input type="text" id="nombreProductoEdit" name="nombreProducto" [(ngModel)]="productoSeleccionado.nombreProducto" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionProductoEdit">Descripción:</label>
+            <textarea id="descripcionProductoEdit" name="descripcionProducto" [(ngModel)]="productoSeleccionado.descripcionProducto" rows="3" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="precioProductoEdit">Precio:</label>
+              <input type="number" id="precioProductoEdit" name="precioProducto" [(ngModel)]="productoSeleccionado.precioProducto" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="stockProductoEdit">Stock:</label>
+              <input type="number" id="stockProductoEdit" name="stockProducto" [(ngModel)]="productoSeleccionado.stockProducto" min="0" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tallaProductoEdit">Talla:</label>
+              <input type="text" id="tallaProductoEdit" name="tallaProducto" [(ngModel)]="productoSeleccionado.tallaProducto" required>
+            </div>
+            <div class="form-group">
+              <label for="colorProductoEdit">Color:</label>
+              <input type="text" id="colorProductoEdit" name="colorProducto" [(ngModel)]="productoSeleccionado.colorProducto" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categoriaProductoEdit">Categoría:</label>
+              <select id="categoriaProductoEdit" name="categoria" [(ngModel)]="productoSeleccionado.categoria" required>
+                <option value="">Seleccionar categoría</option>
+                <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria.nombreCategoria }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="marcaProductoEdit">Marca:</label>
+              <select id="marcaProductoEdit" name="marca" [(ngModel)]="productoSeleccionado.marca" required>
+                <option value="">Seleccionar marca</option>
+                <option *ngFor="let marca of marcas" [value]="marca">{{ marca.nombreMarca }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="imagenProductoEdit">URL de Imagen (opcional):</label>
+            <input type="text" id="imagenProductoEdit" name="imagenProducto" [(ngModel)]="productoSeleccionado.imagenProducto">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cerrarModalEditarProducto()" [disabled]="cargandoEditarProducto">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="!editarProductoForm.form.valid || cargandoEditarProducto">
+              <span *ngIf="!cargandoEditarProducto">Guardar</span>
+              <span *ngIf="cargandoEditarProducto" class="loading-spinner-small"></span>
+              <span *ngIf="cargandoEditarProducto">Guardando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar eliminación de producto -->
+  <div *ngIf="mostrarModalEliminarProducto && productoSeleccionado" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirmar Eliminación</h3>
+        <button class="modal-close" (click)="cerrarModalEliminarProducto()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">
+          <div class="warning-icon">⚠️</div>
+          <h4>¿Estás seguro de que quieres eliminar este producto?</h4>
+          <p><strong>{{ productoSeleccionado.nombreProducto }}</strong></p>
+          <p class="warning-text">Esta acción no se puede deshacer y eliminará permanentemente el producto.</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalEliminarProducto()" [disabled]="cargandoEliminarProducto">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="eliminarProducto()" [disabled]="cargandoEliminarProducto">
+            <span *ngIf="!cargandoEliminarProducto">Eliminar</span>
+            <span *ngIf="cargandoEliminarProducto" class="loading-spinner-small"></span>
+            <span *ngIf="cargandoEliminarProducto">Eliminando...</span>
           </button>
         </div>
       </div>

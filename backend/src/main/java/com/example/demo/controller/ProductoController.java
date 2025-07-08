@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,15 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerPorId(@PathVariable String id) {
+    public ResponseEntity<Producto> obtenerPorId(@PathVariable Integer id) {
         return service.obtenerPorId(id)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/categoria/{idCategoria}")
+    public List<Producto> obtenerPorCategoria(@PathVariable Integer idCategoria) {
+        return service.obtenerPorCategoria(idCategoria);
     }
 
     @PostMapping
@@ -34,7 +40,7 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizar(@PathVariable String id, @RequestBody Producto producto) {
+    public ResponseEntity<Producto> actualizar(@PathVariable Integer id, @RequestBody Producto producto) {
         Optional<Producto> existente = service.obtenerPorId(id);
         if (existente.isPresent()) {
             producto.setIdProducto(id);
@@ -45,7 +51,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable String id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         if (service.obtenerPorId(id).isPresent()) {
             service.eliminar(id);
             return ResponseEntity.noContent().build();

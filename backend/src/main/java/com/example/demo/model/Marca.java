@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,7 @@ public class Marca {
     private String descripcionMarca;
 
     @OneToMany(mappedBy = "marca")
+    @JsonIgnore
     private List<Producto> productos;
 
     // Getters y Setters

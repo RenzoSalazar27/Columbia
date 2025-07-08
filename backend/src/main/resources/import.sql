@@ -22,3 +22,28 @@ INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Puma', 'Forever Fas
 INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('The North Face', 'Never Stop Exploring - Equipamiento para aventuras');
 INSERT INTO marca (nombre_marca, descripcion_marca) VALUES ('Columbia Sportswear', 'Tested Tough - Ropa para actividades al aire libre');
 
+-- Productos para Camisetas
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Camiseta Nike Dri-FIT', 'Camiseta deportiva de alto rendimiento con tecnología de secado rápido', 89.90, 50, NULL, 'M', 'Negro', 1, 1);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Camiseta Adidas Climalite', 'Camiseta ligera y transpirable para actividades deportivas', 75.50, 45, NULL, 'L', 'Blanco', 2, 1);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Camiseta Puma Training', 'Camiseta de entrenamiento con diseño moderno y cómodo', 65.00, 60, NULL, 'S', 'Azul', 3, 1);
+
+-- Productos para Chalecos
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Chaleco Columbia Fleece', 'Chaleco acolchado para actividades al aire libre', 120.00, 30, NULL, 'M', 'Gris', 5, 2);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Chaleco The North Face', 'Chaleco impermeable para condiciones climáticas adversas', 150.00, 25, NULL, 'L', 'Negro', 4, 2);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Chaleco Nike Running', 'Chaleco reflectivo para corredores nocturnos', 95.00, 40, NULL, 'S', 'Amarillo', 1, 2);
+
+-- Productos para Pantalones
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Pantalón Adidas Training', 'Pantalón deportivo con bolsillos laterales', 110.00, 35, NULL, '32', 'Negro', 2, 3);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Pantalón Nike Tech Fleece', 'Pantalón de entrenamiento con tecnología de aislamiento', 130.00, 28, NULL, '34', 'Gris', 1, 3);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Pantalón Columbia Hiking', 'Pantalón resistente para senderismo y actividades outdoor', 140.00, 22, NULL, '30', 'Verde', 5, 3);
+
+-- Productos para Shorts
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Short Nike Running', 'Short ligero para corredores con bolsillo interno', 55.00, 55, NULL, 'M', 'Azul', 1, 4);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Short Adidas Soccer', 'Short deportivo para fútbol y actividades de campo', 45.00, 65, NULL, 'L', 'Blanco', 2, 4);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Short Puma Training', 'Short de entrenamiento con diseño moderno', 50.00, 48, NULL, 'S', 'Negro', 3, 4);
+
+-- Productos para Accesorios
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Gorra Nike Dri-FIT', 'Gorra deportiva con tecnología de secado rápido', 35.00, 80, NULL, 'Única', 'Negro', 1, 5);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Mochila Adidas Training', 'Mochila deportiva con múltiples compartimentos', 85.00, 25, NULL, 'Única', 'Azul', 2, 5);
+INSERT INTO producto (nombre_producto, descripcion_producto, precio_producto, stock_producto, imagen_producto, talla_producto, color_producto, id_marca, id_categoria) VALUES ('Botella Puma Hydration', 'Botella de agua deportiva de 750ml', 25.00, 100, NULL, 'Única', 'Transparente', 3, 5);
+

@@ -3,15 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { CategoriaService, Categoria } from '../categoria.service';
-
-interface Producto {
-  id: number;
-  nombre: string;
-  precio: string;
-  imagen: string;
-  categoria: string;
-  descripcion: string;
-}
+import { ProductoService, Producto } from '../producto.service';
 
 @Component({
   selector: 'app-productos',
@@ -35,104 +27,15 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   // Referencia al modal de login
   @ViewChild(LoginModalComponent) modalLogin!: LoginModalComponent;
 
-  // Productos por categoría (mantenemos algunos productos de ejemplo)
-  private todosLosProductos: { [key: string]: Producto[] } = {
-    'camisetas': [
-      {
-        id: 1,
-        nombre: 'Camiseta Deportiva',
-        precio: 'S/ 89.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'camisetas',
-        descripcion: 'Camiseta cómoda para actividades deportivas'
-      },
-      {
-        id: 2,
-        nombre: 'Camiseta Técnica',
-        precio: 'S/ 159.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'camisetas',
-        descripcion: 'Camiseta con tecnología de secado rápido'
-      }
-    ],
-    'chalecos': [
-      {
-        id: 7,
-        nombre: 'Chaleco Deportivo',
-        precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'chalecos',
-        descripcion: 'Chaleco ligero para actividades outdoor'
-      },
-      {
-        id: 8,
-        nombre: 'Chaleco de Seguridad',
-        precio: 'S/ 89.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'chalecos',
-        descripcion: 'Chaleco reflectivo para seguridad'
-      }
-    ],
-    'pantalones': [
-      {
-        id: 13,
-        nombre: 'Pantalón Deportivo',
-        precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'pantalones',
-        descripcion: 'Pantalón cómodo para deportes'
-      },
-      {
-        id: 14,
-        nombre: 'Pantalón Casual',
-        precio: 'S/ 159.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'pantalones',
-        descripcion: 'Pantalón casual para uso diario'
-      }
-    ],
-    'shorts': [
-      {
-        id: 19,
-        nombre: 'Shorts Deportivos',
-        precio: 'S/ 129.00',
-        imagen: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        categoria: 'shorts',
-        descripcion: 'Shorts cómodos para entrenamiento'
-      },
-      {
-        id: 20,
-        nombre: 'Shorts Casual',
-        precio: 'S/ 89.00',
-        imagen: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-        categoria: 'shorts',
-        descripcion: 'Shorts casuales para el día a día'
-      }
-    ],
-    'accesorios': [
-      {
-        id: 25,
-        nombre: 'Mochila Deportiva',
-        precio: 'S/ 199.00',
-        imagen: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Mochila resistente para deportes'
-      },
-      {
-        id: 26,
-        nombre: 'Botella de Agua',
-        precio: 'S/ 79.00',
-        imagen: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        categoria: 'accesorios',
-        descripcion: 'Botella reutilizable de 1L'
-      }
-    ]
-  };
+  // Productos cargados dinámicamente
+  productosCargados = false;
+  errorCargarProductos = false;
 
   constructor(
     private ruta: ActivatedRoute, 
     private router: Router,
-    private categoriaService: CategoriaService
+    private categoriaService: CategoriaService,
+    private productoService: ProductoService
   ) {}
 
   ngOnInit() {
@@ -144,8 +47,8 @@ export class ProductosComponent implements OnInit, AfterViewInit {
       this.esHome = !this.categoria || this.router.url === '/';
       
       if (this.esHome) {
-        // Si es home, no cargar productos
-        this.productos = [];
+        // Si es home, cargar productos destacados
+        this.cargarProductosDestacados();
         this.tituloCategoria = '';
         this.descripcionCategoria = '';
       } else {
@@ -244,8 +147,54 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     }
   }
 
+  cargarProductosDestacados() {
+    this.productosCargados = false;
+    this.errorCargarProductos = false;
+    
+    // Cargar todos los productos y mostrar los primeros 6 como destacados
+    this.productoService.getProductos().subscribe({
+      next: (productos: Producto[]) => {
+        this.productos = productos.slice(0, 6); // Mostrar solo los primeros 6 productos
+        this.productosCargados = true;
+        this.errorCargarProductos = false;
+      },
+      error: (error: any) => {
+        console.error('Error al cargar productos destacados:', error);
+        this.productos = [];
+        this.productosCargados = true;
+        this.errorCargarProductos = true;
+      }
+    });
+  }
+
   cargarProductos() {
-    this.productos = this.todosLosProductos[this.categoria] || [];
+    this.productosCargados = false;
+    this.errorCargarProductos = false;
+    
+    // Buscar la categoría por nombre
+    const categoriaEncontrada = this.categorias.find(cat => 
+      this.getNombreCategoriaParaUrl(cat.nombreCategoria) === this.categoria
+    );
+    
+    if (categoriaEncontrada) {
+      this.productoService.getProductosPorCategoria(categoriaEncontrada.idCategoria).subscribe({
+        next: (productos: Producto[]) => {
+          this.productos = productos;
+          this.productosCargados = true;
+          this.errorCargarProductos = false;
+        },
+        error: (error: any) => {
+          console.error('Error al cargar productos:', error);
+          this.productos = [];
+          this.productosCargados = true;
+          this.errorCargarProductos = true;
+        }
+      });
+    } else {
+      this.productos = [];
+      this.productosCargados = true;
+      this.errorCargarProductos = true;
+    }
   }
 
   establecerInformacionCategoria() {
