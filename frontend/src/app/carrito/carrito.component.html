@@ -1,11 +1,7 @@
 <div class="carrito-bg">
   <div class="carrito-container">
     <h2>🛒 Mi Carrito</h2>
-    <div *ngIf="!isLoggedIn" class="alerta-login">
-      <p>Debes iniciar sesión para ver tu carrito.</p>
-      <button (click)="openLogin()">Iniciar sesión</button>
-    </div>
-    <ng-container *ngIf="isLoggedIn">
+    <ng-container>
       <table class="carrito-table" *ngIf="items.length > 0; else vacio">
         <thead>
           <tr>
@@ -18,10 +14,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of items">
-            <td>{{ item.producto.nombreProducto }}</td>
+            <td>{{ item.producto?.nombreProducto || 'Sin nombre' }}</td>
             <td>{{ item.cantidadItemCarrito }}</td>
-            <td>S/ {{ item.producto.precioProducto | number:'1.2-2' }}</td>
-            <td>S/ {{ (item.producto.precioProducto * item.cantidadItemCarrito) | number:'1.2-2' }}</td>
+            <td>S/ {{ item.producto?.precioProducto | number:'1.2-2' }}</td>
+            <td>S/ {{ (item.producto?.precioProducto * item.cantidadItemCarrito) | number:'1.2-2' }}</td>
             <td><button (click)="eliminarItem(item)">❌</button></td>
           </tr>
         </tbody>

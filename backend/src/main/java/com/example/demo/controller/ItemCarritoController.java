@@ -55,10 +55,6 @@ public class ItemCarritoController {
             return ResponseEntity.badRequest().body("El carrito no existe para el usuario");
         }
         Carrito carrito = carritoOpt.get();
-        // Validación extra: el usuario del carrito debe coincidir con el usuario logueado
-        if (dto.idUsuario != null && !carrito.getUsuario().getIdUsuario().equals(dto.idUsuario)) {
-            return ResponseEntity.badRequest().body("El carrito no pertenece al usuario");
-        }
         if (productoOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Producto no encontrado");
         }

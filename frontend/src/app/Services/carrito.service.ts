@@ -29,9 +29,9 @@ export class CarritoService {
     return this.http.delete(`${this.apiCarrito}/${idCarrito}`);
   }
 
-  crearCarrito(idUsuario: number): Observable<any> {
+  crearCarrito(idUsuario?: number): Observable<any> {
     return this.http.post(this.apiCarrito, {
-      usuario: { idUsuario: idUsuario },
+      usuario: idUsuario ? { idUsuario: idUsuario } : undefined,
       fechaCreacionCarrito: new Date().toISOString().slice(0, 10)
     });
   }

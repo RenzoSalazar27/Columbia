@@ -14,7 +14,6 @@ import { CarritoNotifierService } from '../app.component';
 })
 export class CarritoComponent implements OnInit {
   items: any[] = [];
-  isLoggedIn: boolean = false;
   toastMsg: string = '';
   toastType: 'success' | 'error' = 'success';
   private carritoService = inject(CarritoService);
@@ -22,7 +21,6 @@ export class CarritoComponent implements OnInit {
   private carritoNotifier = inject(CarritoNotifierService);
 
   ngOnInit() {
-    this.isLoggedIn = !!localStorage.getItem('usuario');
     this.carritoNotifier.carritoChanged$.subscribe(() => {
       this.cargarCarrito();
     });
@@ -30,9 +28,21 @@ export class CarritoComponent implements OnInit {
   }
 
   cargarCarrito() {
-    const idCarrito = Number(localStorage.getItem('idCarrito'));
+    let idCarrito = Number(localStorage.getItem('idCarrito'));
     if (!idCarrito) {
-      this.items = [];
+      // Intentar crear un carrito si no existe
+      this.carritoService.crearCarrito(undefined).subscribe({
+        next: (nuevoCarrito: any) => {
+          if (nuevoCarrito && nuevoCarrito.idCarrito) {
+            localStorage.setItem('idCarrito', String(nuevoCarrito.idCarrito));
+            idCarrito = nuevoCarrito.idCarrito;
+            this.cargarCarrito(); // Recargar con el nuevo idCarrito
+          }
+        },
+        error: () => {
+          this.items = [];
+        }
+      });
       return;
     }
     this.carritoService.obtenerCarrito(idCarrito).subscribe({
@@ -46,7 +56,7 @@ export class CarritoComponent implements OnInit {
   }
 
   getTotal(): number {
-    return this.items.reduce((acc, item) => acc + item.producto.precio * item.cantidadItemCarrito, 0);
+    return this.items.reduce((acc, item) => acc + (item.producto?.precioProducto || 0) * item.cantidadItemCarrito, 0);
   }
 
   eliminarItem(item: any) {

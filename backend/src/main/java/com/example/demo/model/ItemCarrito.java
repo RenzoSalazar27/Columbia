@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
@@ -13,6 +14,7 @@ public class ItemCarrito {
 
     @ManyToOne
     @JoinColumn(name = "id_carrito", nullable = false)
+    @JsonIgnore
     private Carrito carrito;
 
     @ManyToOne
