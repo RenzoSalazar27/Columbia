@@ -20,7 +20,7 @@
 <div class="detalle-producto-container" *ngIf="producto && !cargando && !error">
   <div class="detalle-producto-card">
     <div class="detalle-producto-imagen">
-      <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
+      <img [src]="getImagenProducto(producto)" [alt]="producto.nombreProducto" />
     </div>
     <div class="detalle-producto-info">
       <h2>{{ producto.nombreProducto }}</h2>

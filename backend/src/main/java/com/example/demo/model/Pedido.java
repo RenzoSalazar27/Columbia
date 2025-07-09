@@ -9,8 +9,9 @@ import java.util.List;
 @Table(name = "pedido")
 public class Pedido {
     @Id
-    @Column(name = "id_pedido", length = 10)
-    private String idPedido;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pedido")
+    private Integer idPedido;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
@@ -31,11 +32,11 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido")
     private List<Pago> pagos;
 
-	public String getIdPedido() {
+	public Integer getIdPedido() {
 		return idPedido;
 	}
 
-	public void setIdPedido(String idPedido) {
+	public void setIdPedido(Integer idPedido) {
 		this.idPedido = idPedido;
 	}
 

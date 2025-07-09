@@ -95,4 +95,10 @@ public class ItemCarritoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/carrito/{idCarrito}")
+    public ResponseEntity<Void> vaciarPorCarrito(@PathVariable Integer idCarrito) {
+        service.vaciarPorCarrito(idCarrito);
+        return ResponseEntity.noContent().build();
+    }
 }

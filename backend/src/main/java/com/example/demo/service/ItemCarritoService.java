@@ -33,4 +33,8 @@ public class ItemCarritoService {
     public void eliminar(Integer id) {
         repository.deleteById(id);
     }
+
+    public void vaciarPorCarrito(Integer idCarrito) {
+        repository.deleteByCarrito_IdCarrito(idCarrito);
+    }
 }

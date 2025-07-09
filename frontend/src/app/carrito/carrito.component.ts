@@ -19,6 +19,7 @@ export class CarritoComponent implements OnInit {
   private carritoService = inject(CarritoService);
   private router = inject(Router);
   private carritoNotifier = inject(CarritoNotifierService);
+  mostrarModalConfirmacion = false;
 
   ngOnInit() {
     this.carritoNotifier.carritoChanged$.subscribe(() => {
@@ -72,6 +73,53 @@ export class CarritoComponent implements OnInit {
     });
   }
 
+  restarUnidad(item: any) {
+    if (item.cantidadItemCarrito > 1) {
+      const payload: any = {
+        idCarrito: Number(localStorage.getItem('idCarrito')),
+        idProducto: item.producto.idProducto,
+        cantidadItemCarrito: -1
+      };
+      // Si tienes lógica de usuario, puedes agregar aquí el idUsuario
+      this.carritoService.agregarItem(payload).subscribe(() => {
+        this.cargarCarrito();
+        this.carritoNotifier.notify();
+      });
+    } else {
+      this.eliminarItem(item);
+    }
+  }
+
+  vaciarCarrito() {
+    if (!window.confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
+      return;
+    }
+    const idCarrito = Number(localStorage.getItem('idCarrito'));
+    this.carritoService.vaciarCarrito(idCarrito).subscribe({
+      next: () => {
+        this.cargarCarrito();
+        this.carritoNotifier.notify();
+        this.showToast('Carrito vaciado', 'success');
+      },
+      error: () => {
+        this.showToast('Error al vaciar el carrito', 'error');
+      }
+    });
+  }
+
+  mostrarConfirmacionVaciar() {
+    this.mostrarModalConfirmacion = true;
+  }
+
+  cancelarVaciarCarrito() {
+    this.mostrarModalConfirmacion = false;
+  }
+
+  confirmarVaciarCarrito() {
+    this.mostrarModalConfirmacion = false;
+    this.vaciarCarrito();
+  }
+
   showToast(msg: string, type: 'success' | 'error') {
     this.toastMsg = msg;
     this.toastType = type;
@@ -80,5 +128,10 @@ export class CarritoComponent implements OnInit {
 
   openLogin() {
     window.dispatchEvent(new CustomEvent('openLoginModal'));
+  }
+
+  irAPago() {
+    localStorage.setItem('totalCarrito', this.getTotal().toString());
+    this.router.navigate(['/pago']);
   }
 } 

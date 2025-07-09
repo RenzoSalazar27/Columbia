@@ -267,18 +267,20 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     const idCarrito = Number(localStorage.getItem('idCarrito'));
     const usuarioStr = localStorage.getItem('usuario');
     const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
-    if (!idCarrito || !usuario) {
-      this.mensaje = 'Debes iniciar sesión para agregar al carrito';
+    if (!idCarrito) {
+      this.mensaje = 'No se encontró un carrito. Intenta recargar la página.';
       setTimeout(() => this.mensaje = '', 2000);
       return;
     }
     this.mensaje = '';
-    const item = {
+    const item: any = {
       idCarrito: idCarrito,
       idProducto: producto.idProducto,
-      cantidadItemCarrito: 1,
-      idUsuario: usuario.idUsuario
+      cantidadItemCarrito: 1
     };
+    if (usuario && usuario.idUsuario) {
+      item.idUsuario = usuario.idUsuario;
+    }
     let exitoMostrado = false;
     this.carritoService.agregarItem(item)
       .pipe(finalize(() => {
@@ -300,13 +302,33 @@ export class ProductosComponent implements OnInit, AfterViewInit {
             exitoMostrado = true;
             return;
           }
-          if (error && error.error && typeof error.error === 'string' && error.error.includes('no pertenece al usuario')) {
-            this.mensaje = 'No puedes agregar productos a un carrito que no es tuyo.';
-          } else {
-            this.mensaje = 'Error al agregar al carrito';
-          }
+          this.mensaje = 'Error al agregar al carrito';
           setTimeout(() => this.mensaje = '', 3000);
         }
       });
+  }
+
+  getImagenProducto(producto: any): string {
+    if (producto.imagenProducto && producto.imagenProducto.trim() !== '') {
+      return producto.imagenProducto;
+    }
+    if (producto.categoria?.nombreCategoria) {
+      switch (producto.categoria.nombreCategoria.toLowerCase()) {
+        case 'camisetas':
+          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+        case 'pantalones':
+          return 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=500&q=80';
+        case 'calzado':
+          return 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=500&q=80';
+        case 'accesorios':
+          return 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80';
+        case 'shorts':
+          return 'https://images.unsplash.com/photo-1469398715555-76331a6c7fa0?auto=format&fit=crop&w=500&q=80';
+        case 'chalecos':
+          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+        // Puedes agregar más categorías aquí
+      }
+    }
+    return 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=500&q=80';
   }
 }

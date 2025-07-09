@@ -18,7 +18,7 @@ public class PedidoService {
         return repository.findAll();
     }
 
-    public Optional<Pedido> obtenerPorId(String id) {
+    public Optional<Pedido> obtenerPorId(Integer id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class PedidoService {
         return repository.save(pedido);
     }
 
-    public void eliminar(String id) {
+    public void eliminar(Integer id) {
         repository.deleteById(id);
     }
 }

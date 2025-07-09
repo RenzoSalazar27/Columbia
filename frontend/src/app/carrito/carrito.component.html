@@ -2,6 +2,7 @@
   <div class="carrito-container">
     <h2>🛒 Mi Carrito</h2>
     <ng-container>
+      <button class="vaciar-carrito-btn" (click)="mostrarConfirmacionVaciar()" *ngIf="items.length > 0">Vaciar carrito</button>
       <table class="carrito-table" *ngIf="items.length > 0; else vacio">
         <thead>
           <tr>
@@ -9,7 +10,7 @@
             <th>Cantidad</th>
             <th>Precio unitario</th>
             <th>Subtotal</th>
-            <th></th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -18,7 +19,10 @@
             <td>{{ item.cantidadItemCarrito }}</td>
             <td>S/ {{ item.producto?.precioProducto | number:'1.2-2' }}</td>
             <td>S/ {{ (item.producto?.precioProducto * item.cantidadItemCarrito) | number:'1.2-2' }}</td>
-            <td><button (click)="eliminarItem(item)">❌</button></td>
+            <td>
+              <button (click)="restarUnidad(item)">➖</button>
+              <button (click)="eliminarItem(item)">❌</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -27,9 +31,17 @@
       </ng-template>
       <div class="carrito-total" *ngIf="items.length > 0">
         <span>Total:</span>
-        <span class="total-precio">${{ getTotal() | number:'1.2-2' }}</span>
+        <span class="total-precio">S/ {{ getTotal() | number:'1.2-2' }}</span>
       </div>
+      <button class="btn-pagar" *ngIf="items.length > 0" (click)="irAPago()">Pagar</button>
     </ng-container>
   </div>
   <div *ngIf="toastMsg" class="toast-carrito" [ngClass]="toastType">{{ toastMsg }}</div>
+  <div *ngIf="mostrarModalConfirmacion" class="modal-confirmacion-bg">
+    <div class="modal-confirmacion">
+      <h3>¿Estás seguro de que deseas vaciar el carrito?</h3>
+      <button (click)="confirmarVaciarCarrito()" class="btn-confirmar">Sí, vaciar</button>
+      <button (click)="cancelarVaciarCarrito()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
 </div> 

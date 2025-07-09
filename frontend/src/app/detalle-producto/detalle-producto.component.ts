@@ -125,4 +125,28 @@ export class DetalleProductoComponent implements OnInit {
     this.toastType = type;
     setTimeout(() => this.toastMsg = '', 2000);
   }
+
+  getImagenProducto(producto: any): string {
+    if (producto.imagenProducto && producto.imagenProducto.trim() !== '') {
+      return producto.imagenProducto;
+    }
+    if (producto.categoria?.nombreCategoria) {
+      switch (producto.categoria.nombreCategoria.toLowerCase()) {
+        case 'camisetas':
+          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+        case 'pantalones':
+          return 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=500&q=80';
+        case 'calzado':
+          return 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=500&q=80';
+        case 'accesorios':
+          return 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80';
+        case 'shorts':
+          return 'https://images.unsplash.com/photo-1469398715555-76331a6c7fa0?auto=format&fit=crop&w=500&q=80';
+        case 'chalecos':
+          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+        // Puedes agregar más categorías aquí
+      }
+    }
+    return 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=500&q=80';
+  }
 } 

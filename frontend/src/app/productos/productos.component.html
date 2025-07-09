@@ -29,8 +29,6 @@
         </h1>
         <p class="hero-subtitle">Equipamiento premium para alcanzar tu máximo potencial</p>
         <div class="hero-cta">
-          <button class="btn-hero-primary">Explorar Colección</button>
-          <button class="btn-hero-secondary">Ver Catálogo</button>
         </div>
       </div>
       <div class="hero-stats">
@@ -123,7 +121,7 @@
       <div class="products-showcase" *ngIf="productosCargados && !errorCargarProductos && productos.length > 0">
         <div class="product-showcase-card" *ngFor="let producto of productos">
           <div class="product-image">
-            <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80'" [alt]="producto.nombreProducto" />
+            <img [src]="getImagenProducto(producto)" [alt]="producto.nombreProducto" />
             <div class="product-badge" *ngIf="producto.stockProducto > 0">En Stock</div>
             <div class="product-badge out-of-stock" *ngIf="producto.stockProducto <= 0">Sin Stock</div>
           </div>
@@ -139,7 +137,8 @@
               {{ producto.stockProducto > 0 ? 'Ver Producto' : 'Sin stock' }}
             </button>
             <button class="btn-favorito" [class.favorito-activo]="esFavorito(producto)" (click)="toggleFavorito(producto)">&#10084;</button>
-            <button class="btn-agregar-carrito-mini" title="Agregar al carrito" (click)="agregarAlCarrito(producto)">+</button>
+            <!-- Eliminar botón mini de agregar al carrito -->
+            <!-- <button class="btn-agregar-carrito-mini" title="Agregar al carrito" (click)="agregarAlCarrito(producto)">+</button> -->
           </div>
         </div>
       </div>
@@ -150,61 +149,6 @@
           <div class="no-products-icon">📦</div>
           <h3>No hay productos destacados</h3>
           <p>No se encontraron productos para mostrar.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sección de Actividades -->
-  <section class="activities-section">
-    <div class="container">
-      <div class="section-header-modern">
-        <h2 class="section-title">Explora por Actividad</h2>
-        <p class="section-description">Equipamiento especializado para cada aventura</p>
-      </div>
-      <div class="activities-grid">
-        <div class="activity-card">
-          <div class="activity-image">
-            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Trekking" />
-          </div>
-          <div class="activity-content">
-            <h3>Trekking</h3>
-            <p>Explora senderos y montañas</p>
-            <span class="activity-count">150+ productos</span>
-          </div>
-        </div>
-        
-        <div class="activity-card">
-          <div class="activity-image">
-            <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" alt="Camping" />
-          </div>
-          <div class="activity-content">
-            <h3>Camping</h3>
-            <p>Vive la naturaleza de cerca</p>
-            <span class="activity-count">200+ productos</span>
-          </div>
-        </div>
-        
-        <div class="activity-card">
-          <div class="activity-image">
-            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80" alt="Running" />
-          </div>
-          <div class="activity-content">
-            <h3>Running</h3>
-            <p>Libera tu energía al máximo</p>
-            <span class="activity-count">120+ productos</span>
-          </div>
-        </div>
-        
-        <div class="activity-card">
-          <div class="activity-image">
-            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Montañismo" />
-          </div>
-          <div class="activity-content">
-            <h3>Montañismo</h3>
-            <p>Alcanza nuevas alturas</p>
-            <span class="activity-count">180+ productos</span>
-          </div>
         </div>
       </div>
     </div>
@@ -293,10 +237,10 @@
       <div class="products-grid-modern" *ngIf="productosCargados && !errorCargarProductos">
         <div class="product-card-modern" *ngFor="let producto of productos">
           <div class="product-image-modern">
-            <img [src]="producto.imagenProducto || 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80'" [alt]="producto.nombreProducto" />
+            <img [src]="getImagenProducto(producto)" [alt]="producto.nombreProducto" />
             <div class="product-overlay">
-              <button class="btn-quick-view">Vista rápida</button>
-              <button class="btn-add-wishlist">❤</button>
+              <button class="btn-quick-view" (click)="abrirDetalleProducto(producto)">Vista rápida</button>
+              <button class="btn-add-wishlist" (click)="toggleFavorito(producto)">❤</button>
             </div>
             <div class="product-badge-modern" *ngIf="producto.stockProducto > 0">En Stock</div>
             <div class="product-badge-modern out-of-stock" *ngIf="producto.stockProducto <= 0">Sin Stock</div>

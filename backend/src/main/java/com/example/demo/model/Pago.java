@@ -8,8 +8,9 @@ import java.time.LocalDate;
 @Table(name = "pago")
 public class Pago {
     @Id
-    @Column(name = "id_pago", length = 10)
-    private String idPago;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pago")
+    private Integer idPago;
 
     @ManyToOne
     @JoinColumn(name = "id_pedido", nullable = false)
@@ -27,11 +28,11 @@ public class Pago {
     @Column(name = "fecha_pago", nullable = false)
     private LocalDate fechaPago;
 
-	public String getIdPago() {
+	public Integer getIdPago() {
 		return idPago;
 	}
 
-	public void setIdPago(String idPago) {
+	public void setIdPago(Integer idPago) {
 		this.idPago = idPago;
 	}
 
