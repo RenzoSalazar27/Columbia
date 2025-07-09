@@ -315,17 +315,17 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     if (producto.categoria?.nombreCategoria) {
       switch (producto.categoria.nombreCategoria.toLowerCase()) {
         case 'camisetas':
-          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+          return 'https://images.unsplash.com/photo-1649520937981-763d6a14de7d?auto=format&fit=crop&w=500&q=80';
         case 'pantalones':
-          return 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=500&q=80';
+          return 'https://images.unsplash.com/photo-1719473442938-c605886ba1c3?auto=format&fit=crop&w=500&q=80';
         case 'calzado':
-          return 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=500&q=80';
+          return 'https://plus.unsplash.com/premium_photo-1682435561654-20d84cef00eb?auto=format&fit=contain&w=500&q=80';
         case 'accesorios':
-          return 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80';
+          return 'https://plus.unsplash.com/premium_photo-1663133604256-a97e956adcc8?auto=format&fit=crop&w=500&q=80';
         case 'shorts':
-          return 'https://images.unsplash.com/photo-1469398715555-76331a6c7fa0?auto=format&fit=crop&w=500&q=80';
+          return 'https://www.cgs.store/cdn/shop/articles/SHORTS-CUT_SETT.jpg?width=500&height=500&crop=center';
         case 'chalecos':
-          return 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=80';
+          return 'https://i.pinimg.com/564x/bd/ac/d1/bdacd15de6de0d7115b5d774289a1a70.jpg';
         // Puedes agregar más categorías aquí
       }
     }
